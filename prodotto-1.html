@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prodotto | Blackshape Store</title>
+<meta name="description" content="Lo shop ufficiale Blackshape: felpe, t-shirt, cappellini e accessori per chi vola.">
+<link rel="icon" href="assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* stessi token e componenti di index.html (versione 1) */
+  :root {
+    --black: #000;
+    --graphite: #1D1D1F;
+    --on-dark: #F5F5F7;
+    --muted-on-dark: #A1A1A6;
+    --white: #FFF;
+    --surface: #F5F5F7;
+    --text: #1D1D1F;
+    --muted: #515154;
+    --line: #D2D2D7;
+    --line-dark: rgba(255,255,255,.14);
+    --prime-blue: #1F4FD1;
+    --silver: #A7AAAF;
+    --tobacco: #A0582F;
+    --radius: 12px;
+    --gutter: clamp(16px, 4vw, 48px);
+    --max: 1440px;
+    --h-control: 48px;
+    --section: clamp(72px, 8vw, 112px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: Inter, system-ui, sans-serif; background: var(--white); color: var(--text); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  h1, h2, h3 { font-weight: 600; letter-spacing: -0.03em; line-height: 1.08; }
+  h2 { font-size: clamp(30px, 3.4vw, 48px); }
+  .lead { font-size: 17px; color: var(--muted); max-width: 56ch; }
+  section { padding: var(--section) 0; }
+  .dark { background: var(--black); color: var(--on-dark); }
+  .dark .lead { color: var(--muted-on-dark); }
+  .grey { background: var(--surface); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: var(--h-control); padding: 0 24px; border-radius: var(--radius); font-size: 15px; font-weight: 600; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .btn-light { background: var(--white); color: var(--black); }
+  .btn-light:hover { background: #E8E8ED; }
+  .btn-dark { background: var(--black); color: var(--white); }
+  .btn-dark:hover { background: #333336; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .link-arrow svg { transition: transform .2s; }
+  .link-arrow:hover svg { transform: translateX(3px); }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 36px; }
+
+  /* ---------- barra annunci + header (qui sempre pieno: niente hero sotto) ---------- */
+  .announce { background: var(--black); color: var(--on-dark); font-size: 13px; font-weight: 500; text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); }
+  .header { --h-bg: var(--white); --h-fg: var(--text); --h-muted: var(--muted); --h-line: var(--line); --h-hover: var(--surface); --logo-filter: invert(1); --badge-bg: var(--black); --badge-fg: var(--white);
+    position: sticky; top: 0; z-index: 50; background: var(--h-bg); color: var(--h-fg); border-bottom: 1px solid var(--h-line); transition: background .3s; }
+  .header.scrolled { --h-bg: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+  .header.mega-open { --h-bg: var(--white); }
+  .header .row { display: flex; align-items: center; height: 68px; gap: 40px; }
+  .logo { display: flex; align-items: center; gap: 10px; flex: none; }
+  .logo img { height: 30px; width: auto; filter: var(--logo-filter); }
+  .logo span { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; padding-left: 12px; border-left: 1px solid color-mix(in srgb, currentColor 30%, transparent); line-height: 30px; }
+  .tools { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+  .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius); position: relative; }
+  .icon-btn:hover, .icon-btn[aria-expanded="true"] { background: var(--h-hover); }
+  .cart-count { position: absolute; top: 2px; right: -2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--badge-bg); color: var(--badge-fg); font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  .cats { display: flex; gap: 28px; height: 68px; align-items: center; font-size: 15px; font-weight: 500; }
+  .cats > a, .cats > button { white-space: nowrap; color: var(--h-muted); height: 100%; display: flex; align-items: center; gap: 6px; font-weight: 500; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+  .cats > a:hover, .cats > button:hover, .cats > button[aria-expanded="true"] { color: var(--h-fg); }
+  .cats > button[aria-expanded="true"] { border-bottom-color: var(--h-fg); }
+  .cats > button svg { transition: transform .25s; }
+  .cats > button[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .menu-btn { display: none; }
+
+  .mega { position: absolute; left: 0; right: 0; top: 100%; background: var(--white); border-bottom: 1px solid var(--line); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .22s, transform .22s, visibility .22s; }
+  .mega.open { opacity: 1; visibility: visible; transform: none; }
+  .mega .wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)) 1fr; gap: 40px; padding-top: 36px; padding-bottom: 40px; }
+  .mega h4 { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
+  .mega ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .mega ul a { font-size: 16px; font-weight: 500; color: var(--text); }
+  .mega ul a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .mega .all { display: inline-flex; margin-top: 22px; }
+  .mega .feature { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 16px; }
+  .mega .tile { display: flex; flex-direction: column; gap: 10px; }
+  .mega .tile .img { aspect-ratio: 16 / 10; border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+  .mega .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .mega .tile:hover img { transform: scale(1.05); }
+  .mega .tile strong { font-size: 15px; font-weight: 600; }
+  .mega .tile span { font-size: 14px; color: var(--muted); margin-top: -6px; }
+  .mega .wrap > * { opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+  .mega.open .wrap > * { opacity: 1; transform: none; }
+  .mega.open .wrap > :nth-child(2) { transition-delay: .03s; }
+  .mega.open .wrap > :nth-child(3) { transition-delay: .06s; }
+  .mega.open .wrap > :nth-child(4) { transition-delay: .09s; }
+  .mega .search-wrap { display: block; max-width: 760px; }
+  .search-field { position: relative; display: block; }
+  .search-field svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6E6E73; }
+  .search-field input { width: 100%; height: 56px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); padding: 0 18px 0 50px; font: inherit; font-size: 18px; color: var(--text); }
+  .search-field input:focus { outline: 2px solid var(--black); outline-offset: -1px; background: var(--white); }
+  .search-wrap h4 { margin-top: 24px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: var(--radius); font-size: 15px; font-weight: 500; background: var(--white); color: var(--text); border: 1px solid var(--line); white-space: nowrap; }
+  .chip:hover { border-color: var(--text); }
+  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.18); opacity: 0; visibility: hidden; transition: opacity .22s, visibility .22s; }
+  .scrim.on { opacity: 1; visibility: visible; }
+
+  .mobile-menu { position: fixed; inset: 0; z-index: 60; background: var(--white); padding: calc(env(safe-area-inset-top) + 8px) var(--gutter) calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; transform: translateX(-100%); transition: transform .35s cubic-bezier(.2,.8,.2,1), visibility .35s; visibility: hidden; }
+  .mobile-menu.open { transform: none; visibility: visible; }
+  .mobile-menu .top { display: flex; justify-content: space-between; align-items: center; height: 60px; }
+  .mobile-menu nav { display: flex; flex-direction: column; margin-top: 16px; overflow-y: auto; }
+  .mobile-menu nav a { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .mobile-menu details { border-bottom: 1px solid var(--line); }
+  .mobile-menu summary { list-style: none; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; padding: 14px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu summary svg { transition: transform .25s; }
+  .mobile-menu details[open] summary svg { transform: rotate(180deg); }
+  .mobile-menu details div { display: flex; flex-direction: column; padding: 0 0 14px; }
+  .mobile-menu details div a { font-size: 17px; font-weight: 500; padding: 9px 0; border: 0; letter-spacing: 0; color: var(--muted); }
+  .mobile-menu .btn { margin-top: auto; width: 100%; }
+
+  /* ---------- scheda prodotto: foto che scorrono a sinistra, acquisto fisso a destra ---------- */
+  .crumbs { display: flex; gap: 8px; flex-wrap: wrap; font-size: 14px; color: var(--muted); padding: 20px 0 24px; }
+  .crumbs a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+  .crumbs span[aria-current] { color: var(--text); font-weight: 500; }
+  .pdp { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr); gap: clamp(32px, 4vw, 64px); align-items: start; padding-bottom: var(--section); }
+  .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gallery figure { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; background: #EDEDF0; }
+  .gallery figure:first-child, .gallery figure:last-child:nth-child(2) { grid-column: 1 / -1; aspect-ratio: 1 / 1; } /* foto prodotto quadrate */
+  .gallery img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery .badge { position: absolute; top: 16px; left: 16px; height: 28px; padding: 0 12px; border-radius: 8px; background: var(--black); color: var(--white); font-size: 13px; font-weight: 600; display: grid; place-items: center; }
+  .dots-m { display: none; }
+
+  .buy { position: sticky; top: 92px; }
+  .buy .kind { font-size: 15px; color: var(--muted); font-weight: 500; }
+  .buy h1 { font-size: clamp(30px, 2.8vw, 42px); margin-top: 6px; }
+  .buy .price { display: block; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-top: 12px; }
+  .buy .desc { color: var(--muted); margin-top: 16px; max-width: 48ch; }
+  .opt { margin-top: 28px; }
+  .opt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-size: 15px; margin-bottom: 12px; }
+  .opt-head b { font-weight: 600; }
+  .opt-head b span { font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .opt-head button { font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+  .swatches { display: flex; gap: 10px; }
+  .swatches button { width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); outline: 1px solid transparent; outline-offset: 3px; transition: outline-color .2s; }
+  .swatches button[aria-pressed="true"] { outline: 2px solid var(--text); }
+  .sizes { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+  .sizes button { height: var(--h-control); border-radius: var(--radius); border: 1px solid var(--line); font-size: 15px; font-weight: 500; transition: border-color .2s, background .2s, color .2s; }
+  .sizes button:hover { border-color: var(--text); }
+  .sizes button[aria-pressed="true"] { background: var(--black); color: var(--white); border-color: var(--black); }
+  .sizes.single { grid-template-columns: max-content; }
+  .sizes.single button { padding: 0 20px; }
+  .err { display: none; color: #C4281C; font-size: 14px; font-weight: 500; margin-top: 10px; }
+  .opt.error .err { display: block; }
+  .opt.error .sizes button { border-color: #C4281C; }
+  .cta { margin-top: 28px; }
+  .cta .btn { width: 100%; }
+  .stock { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); margin-top: 14px; }
+  .stock i { width: 8px; height: 8px; border-radius: 50%; background: #1E8E3E; }
+  .stock.low i { background: #C4281C; }
+  .perks { list-style: none; margin-top: 28px; border-top: 1px solid var(--line); }
+  .perks li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .perks svg { margin-top: 2px; }
+  .perks strong { font-weight: 600; }
+  .perks span { color: var(--muted); }
+  .acc details { border-bottom: 1px solid var(--line); }
+  .acc summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 18px 0; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .acc summary::-webkit-details-marker { display: none; }
+  .acc summary svg { transition: transform .25s; flex: none; }
+  .acc details[open] summary svg { transform: rotate(45deg); }
+  .acc .body { padding: 0 0 20px; color: var(--muted); font-size: 16px; }
+  .acc ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .acc li { display: grid; grid-template-columns: 14px 1fr; }
+  .acc li::before { content: "–"; }
+
+  /* ---------- in breve ---------- */
+  .craft { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .craft-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 5; }
+  .craft-media img { width: 100%; height: 100%; object-fit: cover; }
+  .rows { list-style: none; margin-top: 40px; border-top: 1px solid var(--line-dark); }
+  .rows li { display: grid; grid-template-columns: 64px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--line-dark); }
+  .rows .n { font-size: 15px; font-weight: 600; color: var(--muted-on-dark); font-variant-numeric: tabular-nums; padding-top: 3px; }
+  .rows h3 { font-size: 21px; letter-spacing: -0.02em; line-height: 1.3; }
+  .rows p { color: var(--muted-on-dark); margin-top: 6px; font-size: 16px; }
+
+  /* ---------- card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card { background: var(--white); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .card .media { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; background: #EDEDF0; }
+  .card .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .card:hover .media img { transform: scale(1.04); }
+  .card .info { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .card .kind { font-size: 13px; color: var(--muted); }
+  .card h3 { font-size: 17px; letter-spacing: -0.01em; line-height: 1.3; }
+  .card .foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 14px; }
+  .card .price { font-size: 17px; font-weight: 600; }
+  .add { height: 40px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--text); color: var(--text); font-size: 14px; font-weight: 600; white-space: nowrap; transition: background .2s, color .2s; }
+  .add:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+  a.add { display: inline-grid; place-items: center; }
+
+  /* servizi (come in home): il dato grande è il protagonista, colonne separate da filetti */
+  .svc { padding: clamp(48px, 6vw, 80px) 0; }
+  .services { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .service { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; align-content: start; padding: 32px clamp(20px, 3vw, 48px); } /* subgrid: titoli allineati anche se una colonna va a capo */
+  .service:first-child { padding-left: 0; }
+  .service:last-child { padding-right: 0; }
+  .service + .service { border-left: 1px solid var(--line); }
+  .service .big { display: flex; align-items: center; min-height: 56px; font-size: clamp(38px, 3.6vw, 56px); font-weight: 600; letter-spacing: -0.045em; line-height: 1; }
+  .service strong { display: block; margin-top: 18px; font-size: 17px; font-weight: 600; }
+  .service p { color: var(--muted); margin-top: 4px; font-size: 15px; }
+  .pay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 56px; }
+  .pay span { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; font-weight: 600; display: grid; place-items: center; white-space: nowrap; }
+
+  /* ---------- guida taglie ---------- */
+  dialog { margin: auto; width: min(560px, calc(100vw - 32px)); border: 0; border-radius: var(--radius); padding: 28px; color: var(--text); }
+  dialog::backdrop { background: rgba(0,0,0,.32); }
+  dialog .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  dialog h2 { font-size: 24px; }
+  dialog p { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+  dialog table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  dialog th, dialog td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  dialog th { font-weight: 600; }
+
+  /* ---------- barra d'acquisto mobile ---------- */
+  .buybar { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 45; display: none; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-radius: var(--radius); background: rgba(255,255,255,.86); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--line); transform: translateY(calc(100% + 24px)); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .buybar.on { transform: none; }
+  .buybar div { min-width: 0; flex: 1; line-height: 1.25; }
+  .buybar strong { display: block; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .buybar span { font-size: 14px; color: var(--muted); }
+
+  footer { background: var(--black); color: var(--muted-on-dark); padding: 72px 0 calc(28px + env(safe-area-inset-bottom)); font-size: 15px; }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 32px; }
+  .foot-grid img { height: 20px; width: auto; }
+  .foot-grid address { font-style: normal; margin-top: 20px; line-height: 1.7; }
+  .foot-grid h4 { color: var(--on-dark); font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+  .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .foot-grid a:hover { color: var(--on-dark); }
+  .legal { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line-dark); font-size: 13px; }
+  .legal nav { display: flex; gap: 24px; flex-wrap: wrap; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 70; background: rgba(29,29,31,.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--on-dark); padding: 14px 20px; border-radius: var(--radius); font-size: 15px; font-weight: 500; width: max-content; max-width: calc(100vw - 32px); transition: opacity .25s, transform .25s, bottom .3s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  body.bar-on .toast { bottom: calc(92px + env(safe-area-inset-bottom)); }
+
+  @media (max-width: 1100px) {
+    .pdp { grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr); }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    .cats, .tools .hide-m { display: none; }
+    .menu-btn { display: grid; }
+    .header .row { height: 60px; gap: 8px; }
+    .logo { margin-right: auto; }
+    .crumbs { padding: 14px 0 16px; font-size: 13px; }
+    .pdp { grid-template-columns: 1fr; gap: 28px; }
+    /* galleria: binario orizzontale dentro il contenitore, la pagina non scorre di lato */
+    .gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 8px; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); scroll-padding-inline: var(--gutter); }
+    .gallery::-webkit-scrollbar { display: none; }
+    .gallery figure, .gallery figure:first-child { flex: 0 0 100%; aspect-ratio: 4 / 5; scroll-snap-align: start; }
+    .dots-m { display: flex; justify-content: center; gap: 6px; margin-top: -16px; }
+    .dots-m i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background .2s; }
+    .dots-m i.on { background: var(--text); }
+    .buy { position: static; }
+    .buybar { display: flex; }
+    .craft { grid-template-columns: 1fr; }
+    .craft-media { aspect-ratio: 4 / 3; }
+    .section-head { flex-direction: column; align-items: flex-start; }
+    .grid { gap: 10px; }
+    .services { grid-template-columns: 1fr; }
+    .service { padding: 24px 0; }
+    .service + .service { border-left: 0; border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .logo span { display: none; }
+    .logo img { height: 26px; }
+    .rows li { grid-template-columns: 40px 1fr; padding: 20px 0; }
+    .rows h3 { font-size: 18px; }
+    .card .info { padding: 12px 12px 14px; }
+    .card h3 { font-size: 15px; }
+    .card .foot { flex-direction: column; align-items: stretch; gap: 10px; }
+    .add { width: 100%; }
+    .foot-grid > div:first-child { grid-column: 1 / -1; }
+    dialog { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="announce">Spedizione gratuita in UE per ordini sopra 150 €</div>
+
+<header class="header">
+  <div class="wrap">
+    <div class="row">
+      <button class="icon-btn menu-btn" id="menuOpen" aria-label="Apri menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg></button>
+      <a href="index.html" class="logo" aria-label="Blackshape Store, home">
+        <img src="assets/logo-white.svg" alt="Blackshape">
+        <span>Store</span>
+      </a>
+      <nav class="cats" aria-label="Categorie">
+        <a href="index.html#novita">Novità</a>
+        <button aria-expanded="false" aria-controls="mega-abbigliamento">Abbigliamento <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button aria-expanded="false" aria-controls="mega-volo">Per il volo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button aria-expanded="false" aria-controls="mega-accessori">Accessori <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+      </nav>
+      <div class="tools">
+        <button class="icon-btn search-btn" aria-label="Cerca" aria-expanded="false" aria-controls="mega-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+        <button class="icon-btn hide-m" aria-label="Account"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
+        <button class="icon-btn" aria-label="Carrello"><svg width="20" height="18" viewBox="0 0 75 66" fill="currentColor"><path d="m38 29.1c-0.7 0-1.4-0.4-1.8-1.1l-6.4-12.8c-1.8-3.5-0.8-7.8 2.4-10.1 1.4-1.1 3.1-1.6 4.8-1.6 2.7 0 5.2 1.3 6.7 3.6l12.8 18.8c0.6 1 0.3 2.2-0.6 2.8-0.9 0.7-2.1 0.4-2.8-0.5l-12.7-18.9c-0.8-1.1-2.1-1.8-3.4-1.8-0.9 0-1.7 0.3-2.4 0.8-1.6 1.2-2.1 3.3-1.2 5.1l6.4 12.8c0.5 1 0.1 2.2-0.9 2.7q-0.4 0.2-0.9 0.2z"/><path d="m37 62.5c-1.7 0-3.4-0.6-4.8-1.6-3.2-2.3-4.2-6.6-2.4-10.1l5-9.9h-14.6c-2.9 0-5.5-1.2-7.3-3.4l-8.9-10.9c-1.2-1.5-1.8-3.5-1.6-5.4 0.2-2 1.2-3.8 2.7-5 1.4-1 3-1.6 4.6-1.6 1.8 0 3.6 0.6 4.9 1.8l9.8 8.7h39.1c4.1 0 7.6 2.9 8.1 6.9 0.3 2.2-0.4 4.5-1.9 6.2-1.5 1.8-3.7 2.7-6 2.7h-7.8l-12.2 18.1c-1.5 2.2-4 3.5-6.7 3.5zm-27.3-43.9c-0.7 0-1.5 0.2-2.1 0.7-0.7 0.6-1.1 1.4-1.2 2.3-0.1 0.9 0.2 1.8 0.7 2.5l8.9 10.8c1 1.3 2.6 2 4.2 2h17.8c0.7 0 1.4 0.4 1.7 1 0.4 0.6 0.4 1.3 0.1 1.9l-6.4 12.8c-0.9 1.8-0.4 3.9 1.2 5.1 0.7 0.5 1.5 0.8 2.4 0.8 1.3 0 2.6-0.7 3.4-1.8l12.7-18.9c0.4-0.5 1-0.9 1.7-0.9h8.9c1.1 0 2.2-0.5 2.9-1.3 0.8-0.9 1.1-2 1-3.1-0.3-2-2-3.4-4.1-3.4h-39.9c-0.5 0-0.9-0.2-1.3-0.5l-10.3-9.2c-0.7-0.5-1.4-0.8-2.3-0.8z"/></svg><span class="cart-count" id="cartCount">0</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-search">
+    <div class="wrap search-wrap">
+      <label class="search-field">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" placeholder="Cerca felpe, zaini, kneeboard…" aria-label="Cerca nello shop">
+      </label>
+      <h4>Ricerche frequenti</h4>
+      <div class="chips"><a class="chip" href="prodotto-1.html?id=felpa">Felpa</a><a class="chip" href="prodotto-1.html?id=zaino">Zaino</a><a class="chip" href="prodotto-1.html?id=kneeboard">Kneeboard</a><a class="chip" href="prodotto-1.html?id=borsa">Borsa pilota</a></div>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-abbigliamento">
+    <div class="wrap">
+      <div><h4>Prodotti</h4><ul><li><a href="prodotto-1.html?id=felpa">Felpa girocollo unisex</a></li><li><a href="prodotto-1.html?id=tshirt">T-shirt Blackshape</a></li><li><a href="prodotto-1.html?id=cappellino">Cappellino Blackshape</a></li></ul></div>
+      <div><h4>Scopri</h4><ul><li><a href="index.html#novita">Novità</a></li></ul><a href="shop-1.html" class="link-arrow all">Tutti i prodotti <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="feature">
+        <a href="prodotto-1.html?id=felpa" class="tile"><div class="img"><img src="assets/shop/f-felpa.webp" alt="Felpa nera indossata"></div><strong>Felpa girocollo</strong><span>Cotone e poliestere rigenerati</span></a>
+        <a href="prodotto-1.html?id=tshirt" class="tile"><div class="img"><img src="assets/shop/f-tshirt.webp" alt="T-shirt nera indossata"></div><strong>T-shirt</strong><span>Cotone, logo Blackshape</span></a>
+        <a href="prodotto-1.html?id=cappellino" class="tile"><div class="img"><img src="assets/shop/f-cappellino.webp" alt="Cappellino nero"></div><strong>Cappellino</strong><span>Visiera curva, regolabile</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-volo">
+    <div class="wrap">
+      <div><h4>Prodotti</h4><ul><li><a href="prodotto-1.html?id=zaino">Zaino aeronautico</a></li><li><a href="prodotto-1.html?id=borsa">Borsa pilota</a></li><li><a href="prodotto-1.html?id=kneeboard">Kneeboard</a></li></ul></div>
+      <div><h4>Scopri</h4><ul><li><a href="index.html#novita">Novità</a></li></ul><a href="shop-1.html" class="link-arrow all">Tutti i prodotti <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="feature">
+        <a href="prodotto-1.html?id=zaino" class="tile"><div class="img"><img src="assets/shop/f-zaino.webp" alt="Zaino nero"></div><strong>Zaino aeronautico</strong><span>Cuffie, documenti e tablet</span></a>
+        <a href="prodotto-1.html?id=borsa" class="tile"><div class="img"><img src="assets/shop/f-borsa.webp" alt="Borsa pilota nera a tracolla"></div><strong>Borsa pilota</strong><span>Cuffie, carte e documenti</span></a>
+        <a href="prodotto-1.html?id=kneeboard" class="tile"><div class="img"><img src="assets/shop/f-kneeboard.webp" alt="Kneeboard sulla gamba del pilota"></div><strong>Kneeboard</strong><span>Carte e appunti sulla gamba</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-accessori">
+    <div class="wrap">
+      <div><h4>Prodotti</h4><ul><li><a href="prodotto-1.html?id=bottiglia">Bottiglia in acciaio 500 ml</a></li><li><a href="prodotto-1.html?id=agenda">Agenda Blackshape</a></li></ul></div>
+      <div><h4>Scopri</h4><ul><li><a href="index.html#novita">Novità</a></li></ul><a href="shop-1.html" class="link-arrow all">Tutti i prodotti <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="feature">
+        <a href="prodotto-1.html?id=bottiglia" class="tile"><div class="img"><img src="assets/shop/f-bottiglia.webp" alt="Bottiglia in acciaio"></div><strong>Bottiglia 500 ml</strong><span>Acciaio inossidabile riciclato</span></a>
+        <a href="prodotto-1.html?id=agenda" class="tile"><div class="img"><img src="assets/shop/f-agenda.webp" alt="Agenda nera"></div><strong>Agenda</strong><span>Voli, appunti e scadenze</span></a>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="scrim" id="scrim"></div>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <div class="top">
+    <img src="assets/logo-white.svg" alt="Blackshape" style="height:18px;width:auto;filter:invert(1)">
+    <button class="icon-btn" id="menuClose" aria-label="Chiudi menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <nav>
+    <a href="index.html#novita">Novità</a>
+    <details><summary>Abbigliamento <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div><a href="prodotto-1.html?id=felpa">Felpa girocollo</a><a href="prodotto-1.html?id=tshirt">T-shirt</a><a href="prodotto-1.html?id=cappellino">Cappellino</a></div></details>
+    <details><summary>Per il volo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div><a href="prodotto-1.html?id=zaino">Zaino aeronautico</a><a href="prodotto-1.html?id=borsa">Borsa pilota</a><a href="prodotto-1.html?id=kneeboard">Kneeboard</a></div></details>
+    <details><summary>Accessori <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div><a href="prodotto-1.html?id=bottiglia">Bottiglia 500 ml</a><a href="prodotto-1.html?id=agenda">Agenda</a></div></details>
+    <a href="#">Account</a>
+  </nav>
+  <a href="index.html#novita" class="btn btn-dark">Acquista le novità</a>
+</div>
+
+<main>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Percorso"><a href="index.html">Home</a><span aria-hidden="true">/</span><a href="shop-1.html" id="crumbCat"></a><span aria-hidden="true">/</span><span aria-current="page" id="crumbName"></span></nav>
+
+    <div class="pdp">
+      <div>
+        <div class="gallery" id="gallery"></div>
+        <div class="dots-m" id="dots" aria-hidden="true"></div>
+      </div>
+
+      <div class="buy">
+        <span class="kind" id="kind"></span>
+        <h1 id="name"></h1>
+        <span class="price" id="price"></span>
+        <p class="desc" id="desc"></p>
+
+        <div class="opt">
+          <div class="opt-head"><b>Colore <span id="colorName"></span></b></div>
+          <div class="swatches" id="swatches"></div>
+        </div>
+
+        <div class="opt" id="sizeOpt">
+          <div class="opt-head"><b id="sizeLabel">Taglia</b><button type="button" id="guideBtn">Guida alle taglie</button></div>
+          <div class="sizes" id="sizes"></div>
+          <p class="err" role="alert">Scegli una taglia per continuare.</p>
+        </div>
+
+        <div class="cta">
+          <button class="btn btn-dark" id="addBtn"></button>
+        </div>
+        <p class="stock" id="stock"><i></i><span></span></p>
+
+        <ul class="perks">
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><div><strong>Spedizione gratuita</strong> <span>in UE sopra 150 €, consegna in 2-4 giorni</span></div></li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/></svg><div><strong>Reso in 30 giorni</strong> <span>e cambio taglia gratuito</span></div></li>        </ul>
+
+        <div class="acc" id="acc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IN BREVE -->
+  <section class="dark">
+    <div class="wrap craft">
+      <div class="craft-media"><img id="craftImg" src="" alt=""></div>
+      <div>
+        <h2 id="craftTitle"></h2>
+        <ol class="rows" id="craftRows"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPLETA IL LOOK -->
+  <section class="grey">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Completa il look</h2>
+        <a href="shop-1.html" class="link-arrow">Tutti i prodotti <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="grid" id="related"></div>
+    </div>
+  </section>
+
+  <section class="svc">
+    <div class="wrap">
+      <div class="services">
+        <div class="service"><span class="big">2-4 giorni</span><strong>Consegna in UE</strong><p>Gratuita per gli ordini sopra 150 €.</p></div>
+        <div class="service"><span class="big">30 giorni</span><strong>Per il reso</strong><p>Il cambio taglia è gratuito.</p></div>
+        <div class="service"><div class="pay"><span>Carte</span><span>PayPal</span><span>Apple Pay</span><span>Bonifico</span></div><strong>Pagamenti sicuri</strong><p>Transazioni protette, nessun dato di carta salvato.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="assets/logo-white.svg" alt="Blackshape">
+        <address>Blackshape S.p.A.<br>Strada Statale 16, km 841<br>Monopoli (BA), Italia</address>
+      </div>
+      <div><h4>Shop</h4><ul><li><a href="index.html#novita">Novità</a></li><li><a href="shop-1.html">Tutti i prodotti</a></li><li><a href="index.html#categorie">Categorie</a></li></ul></div>
+      <div><h4>Assistenza</h4><ul><li><a href="#">Spedizioni e resi</a></li><li><a href="#">Guida alle taglie</a></li><li><a href="#">Traccia l'ordine</a></li><li><a href="#">Contatti</a></li></ul></div>
+      <div><h4>Blackshape</h4><ul><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Sito ufficiale</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Aerei</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Scuola di volo</a></li></ul></div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Blackshape S.p.A. Tutti i diritti riservati. · Made in Never Before Italia</span>
+      <nav><a href="#">Privacy</a><a href="#">Cookie</a><a href="#">Condizioni di vendita</a></nav>
+    </div>
+  </div>
+</footer>
+
+<div class="buybar" id="buybar">
+  <div><strong id="barName"></strong><span id="barPrice"></span></div>
+  <button class="btn btn-dark" id="barAdd">Aggiungi</button>
+</div>
+
+<dialog id="guide">
+  <div class="top"><h2>Guida alle taglie</h2><button class="icon-btn" id="guideClose" aria-label="Chiudi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <p>Misure del corpo in centimetri. Felpa e t-shirt sono unisex: se sei tra due taglie, scegli la più grande.</p>
+  <table>
+    <thead><tr><th>Taglia</th><th>Petto</th><th>Vita</th><th>Altezza</th></tr></thead>
+    <tbody>
+      <tr><td>XS</td><td>84-88</td><td>70-74</td><td>160-168</td></tr>
+      <tr><td>S</td><td>88-94</td><td>74-80</td><td>165-172</td></tr>
+      <tr><td>M</td><td>94-100</td><td>80-86</td><td>170-178</td></tr>
+      <tr><td>L</td><td>100-106</td><td>86-92</td><td>175-183</td></tr>
+      <tr><td>XL</td><td>106-112</td><td>92-98</td><td>180-188</td></tr>
+      <tr><td>XXL</td><td>112-118</td><td>98-104</td><td>185-193</td></tr>
+    </tbody>
+  </table>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // catalogo provvisorio (stessi prodotti della home v1): foto, prezzi e dettagli da confermare
+  const S = 'assets/shop/';
+  const APPAREL = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const products = [
+    { id: 'cappellino', cat: 'Abbigliamento', kind: 'Cappellino', name: 'Cappellino Blackshape', price: 35, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Cappellino con visiera curva e logo Blackshape sul davanti. Si regola sul retro, quindi va bene a tutti.',
+      colors: [['Nero', '#1D1D1F'], ['Bianco', '#FFFFFF']], sizes: ['Taglia unica'],
+      gallery: [S + 'f-cappellino.webp'], craft: 'assets/prime-veloce.webp',
+      cabin: [['Visiera curva', 'Ripara dal sole durante i controlli sul piazzale.'], ['Chiusura regolabile', 'Sul retro: una taglia per tutti.'], ['Logo Blackshape', 'Sul davanti.']],
+      mat: ['Visiera curva', 'Chiusura regolabile sul retro'] },
+    { id: 'bottiglia', cat: 'Accessori', kind: 'Bottiglia', name: 'Bottiglia in acciaio 500 ml', price: 29, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Mezzo litro in acciaio inossidabile riciclato, con tappo a vite. Al posto delle bottigliette di plastica in borsa.',
+      colors: [['Nero', '#1D1D1F'], ['Grigio', '#8E8E93']], sizes: ['500 ml'],
+      gallery: [S + 'f-bottiglia.webp'], craft: 'assets/v-apron.webp',
+      cabin: [['Acciaio riciclato', 'Acciaio inossidabile, niente plastica.'], ['500 ml', 'Mezzo litro d\'acqua per il volo.'], ['Tappo a vite', 'Si chiude e non perde in borsa.']],
+      mat: ['Acciaio inossidabile riciclato', 'Capacità 500 ml', 'Tappo a vite'] },
+    { id: 'felpa', cat: 'Abbigliamento', kind: 'Felpa', name: 'Felpa girocollo unisex', price: 69, badge: 'Nuovo', stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Cotone e poliestere rigenerati, 280 grammi al metro quadro. Girocollo, taglio unisex e logo Blackshape sul petto.',
+      colors: [['Nero', '#1D1D1F'], ['Grigio', '#8E8E93'], ['Bianco', '#FFFFFF']], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: [S + 'f-felpa.webp'], craft: 'assets/v-apron.webp',
+      cabin: [['280 g/m²', 'Cotone e poliestere rigenerati.'], ['Girocollo unisex', 'Dalla XS alla XXL.'], ['Logo Blackshape', 'Sul petto.']],
+      mat: ['Cotone e poliestere rigenerati', '280 g/m²', 'Girocollo, unisex'] },
+    { id: 'agenda', cat: 'Accessori', kind: 'Agenda', name: 'Agenda Blackshape', price: 25, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Copertina nera con il logo Blackshape. Per segnare voli, appunti e scadenze, dal rinnovo della licenza alla prossima revisione.',
+      colors: [['Nero', '#1D1D1F']], sizes: ['Formato unico'],
+      gallery: [S + 'f-agenda.webp'], craft: 'assets/v-cockpit.webp',
+      cabin: [['Copertina nera', 'Con il logo Blackshape.'], ['Voli e appunti', 'Ore di volo, rotte e note.'], ['Scadenze', 'Licenza, visita medica, revisioni.']],
+      mat: ['Copertina nera con logo Blackshape'] },
+    { id: 'tshirt', cat: 'Abbigliamento', kind: 'T-shirt', name: 'T-shirt Blackshape', price: 35, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'T-shirt girocollo in cotone con il logo Blackshape.',
+      colors: [['Nero', '#1D1D1F'], ['Bianco', '#FFFFFF']], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: [S + 'f-tshirt.webp'], craft: 'assets/gabriel-apron.webp',
+      cabin: [['Cotone', 'Girocollo, taglio unisex.'], ['Dalla XS alla XXL', 'Trovi la guida alle taglie qui sopra.'], ['Logo Blackshape', 'Sul petto.']],
+      mat: ['Cotone', 'Girocollo'] },
+    { id: 'zaino', cat: 'Per il volo', kind: 'Zaino', name: 'Zaino aeronautico', price: 119, badge: 'Nuovo', stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Zaino nero con il logo Blackshape, con spazio per cuffie, documenti di volo e tablet.',
+      colors: [['Nero', '#1D1D1F']], sizes: ['Taglia unica'],
+      gallery: [S + 'f-zaino.webp'], craft: 'assets/prime-veloce.webp',
+      cabin: [['Cuffie', 'Hanno il loro spazio.'], ['Documenti di volo', 'Licenza, carte e libretto sempre con te.'], ['Tablet', 'Per le carte digitali.']],
+      mat: ['Nero, con logo Blackshape'] },
+    { id: 'borsa', cat: 'Per il volo', kind: 'Borsa', name: 'Borsa pilota', price: 99, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Borsa nera con il logo Blackshape, per portare a bordo cuffie, carte e documenti di volo.',
+      colors: [['Nero', '#1D1D1F']], sizes: ['Taglia unica'],
+      gallery: [S + 'f-borsa.webp'], craft: 'assets/v-apron.webp',
+      cabin: [['Cuffie', 'Si portano a bordo nella borsa.'], ['Carte', 'Carte e kneeboard insieme.'], ['Documenti di volo', 'Sempre a portata di mano.']],
+      mat: ['Nera, con logo Blackshape'] },
+    { id: 'kneeboard', cat: 'Per il volo', kind: 'Kneeboard', name: 'Kneeboard', price: 39, stock: 'Disponibile, spedito in 24 ore',
+      desc: 'Tavoletta da coscia con cinghia regolabile: carte, checklist e appunti restano sulla gamba anche in volo.',
+      colors: [['Nero', '#1D1D1F']], sizes: ['Taglia unica'],
+      gallery: [S + 'f-kneeboard.webp'], craft: 'assets/v-cockpit.webp',
+      cabin: [['Cinghia regolabile', 'Si fissa sulla coscia.'], ['Carte e checklist', 'Sempre sotto gli occhi.'], ['Appunti in volo', 'Frequenze, orari, istruzioni.']],
+      mat: ['Cinghia regolabile', 'Logo Blackshape'] },
+  ];
+
+  const $ = s => document.querySelector(s);
+  const p = products.find(x => x.id === new URLSearchParams(location.search).get('id')) || products[0];
+  const apparel = p.sizes.length > 1;
+  document.title = p.name + ' | Blackshape Store';
+
+  $('#crumbCat').textContent = p.cat;
+  $('#crumbName').textContent = p.name;
+  $('#kind').textContent = p.kind;
+  $('#name').textContent = p.name;
+  $('#price').textContent = p.price + ' €';
+  $('#desc').textContent = p.desc;
+  $('#addBtn').textContent = `Aggiungi al carrello · ${p.price} €`;
+  $('#barName').textContent = p.name;
+  $('#barPrice').textContent = p.price + ' €';
+  $('#stock span').textContent = p.stock;
+  $('#stock').classList.toggle('low', !!p.low);
+
+  // galleria: prima foto grande, le altre a coppie; su mobile binario con pallini
+  $('#gallery').innerHTML = p.gallery.map((g, i) => `<figure><img src="${g}" alt="${i ? '' : p.name}" ${i ? 'loading="lazy"' : ''}>${!i && p.badge ? `<span class="badge">${p.badge}</span>` : ''}</figure>`).join('');
+  $('#dots').innerHTML = p.gallery.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('');
+  $('#gallery').addEventListener('scroll', e => {
+    const i = Math.round(e.target.scrollLeft / e.target.clientWidth);
+    document.querySelectorAll('#dots i').forEach((d, j) => d.classList.toggle('on', j === i));
+  }, { passive: true });
+
+  // colore
+  const setColor = i => {
+    $('#colorName').textContent = p.colors[i][0];
+    document.querySelectorAll('#swatches button').forEach((b, j) => b.setAttribute('aria-pressed', i === j));
+  };
+  $('#swatches').innerHTML = p.colors.map(([n, c]) => `<button style="background:${c}" aria-label="${n}"></button>`).join('');
+  document.querySelectorAll('#swatches button').forEach((b, i) => b.onclick = () => setColor(i));
+  setColor(0);
+
+  // taglia: obbligatoria solo se ce n'è più di una
+  let size = apparel ? null : p.sizes[0];
+  $('#sizeLabel').textContent = apparel ? 'Taglia' : (p.id === 'borsa' ? 'Capacità' : 'Taglia');
+  $('#guideBtn').hidden = !apparel;
+  $('#sizes').classList.toggle('single', !apparel);
+  $('#sizes').innerHTML = p.sizes.map(s => `<button aria-pressed="${!apparel}">${s}</button>`).join('');
+  document.querySelectorAll('#sizes button').forEach(b => b.onclick = () => {
+    size = b.textContent;
+    document.querySelectorAll('#sizes button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    $('#sizeOpt').classList.remove('error');
+  });
+
+  // dettagli
+  const acc = [
+    ['Materiali e cura', `<ul>${p.mat.map(m => `<li>${m}</li>`).join('')}</ul>`],
+    ['Spedizioni e resi', '<p>Spedizione gratuita in UE sopra 150 €, consegna in 2-4 giorni lavorativi. Hai 30 giorni per il reso; il cambio taglia è gratuito.</p>'],
+  ];
+  const plus = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+  $('#acc').innerHTML = acc.map(([t, b]) => `<details><summary>${t} ${plus}</summary><div class="body">${b}</div></details>`).join('');
+
+  // in breve
+  $('#craftImg').src = p.craft; $('#craftImg').alt = p.name;
+  $('#craftTitle').textContent = 'In breve.';
+  $('#craftRows').innerHTML = p.cabin.map(([t, d], i) => `<li><span class="n">0${i + 1}</span><div><h3>${t}</h3><p>${d}</p></div></li>`).join('');
+
+  // completa il look: prima gli altri della stessa categoria, poi il resto
+  const others = products.filter(x => x !== p).sort((a, b) => (b.cat === p.cat) - (a.cat === p.cat)).slice(0, 4);
+  $('#related').innerHTML = others.map(x => `
+    <article class="card">
+      <a href="prodotto-1.html?id=${x.id}" class="media"><img src="${x.gallery[0]}" alt="${x.name}" loading="lazy"></a>
+      <div class="info">
+        <span class="kind">${x.kind}</span>
+        <h3><a href="prodotto-1.html?id=${x.id}">${x.name}</a></h3>
+        <div class="foot"><span class="price">${x.price} €</span><a class="add" href="prodotto-1.html?id=${x.id}">Scegli</a></div>
+      </div>
+    </article>`).join('');
+
+  // carrello (provvisorio, come in home)
+  const toast = $('#toast');
+  const show = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(show.t); show.t = setTimeout(() => toast.classList.remove('show'), 2200); };
+  let count = 0;
+  const add = () => {
+    if (!size) {
+      $('#sizeOpt').classList.add('error');
+      $('#sizeOpt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    $('#cartCount').textContent = ++count;
+    show(`${p.name} (${size}) aggiunto al carrello`);
+  };
+  $('#addBtn').onclick = add;
+  $('#barAdd').onclick = add;
+
+  // barra mobile: compare quando il bottone principale esce dallo schermo verso l'alto
+  const bar = $('#buybar');
+  new IntersectionObserver(([e]) => {
+    const on = !e.isIntersecting && e.boundingClientRect.top < 0;
+    bar.classList.toggle('on', on);
+    document.body.classList.toggle('bar-on', on && getComputedStyle(bar).display !== 'none');
+  }).observe($('#addBtn'));
+
+  // guida taglie
+  const guide = $('#guide');
+  $('#guideBtn').onclick = () => guide.showModal();
+  $('#guideClose').onclick = () => guide.close();
+  guide.addEventListener('click', e => { if (e.target === guide) guide.close(); });
+
+  // megamenu (come in home)
+  const header = $('.header');
+  const scrim = $('#scrim');
+  const triggers = [...document.querySelectorAll('.cats > button, .search-btn')];
+  let closeTimer;
+  const openMega = t => {
+    clearTimeout(closeTimer);
+    triggers.forEach(b => {
+      const on = b === t;
+      b.setAttribute('aria-expanded', on);
+      document.getElementById(b.getAttribute('aria-controls')).classList.toggle('open', on);
+    });
+    scrim.classList.toggle('on', !!t);
+    header.classList.toggle('mega-open', !!t);
+  };
+  triggers.forEach(b => {
+    if (!b.classList.contains('search-btn')) b.addEventListener('mouseenter', () => openMega(b));
+    b.addEventListener('click', () => openMega(b.getAttribute('aria-expanded') === 'true' ? null : b));
+  });
+  document.querySelectorAll('.cats > a').forEach(a => a.addEventListener('mouseenter', () => openMega(null)));
+  header.addEventListener('mouseleave', () => { closeTimer = setTimeout(() => openMega(null), 150); });
+  header.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  scrim.addEventListener('click', () => openMega(null));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') openMega(null); });
+  $('.search-btn').addEventListener('click', () => setTimeout(() => $('#mega-search input').focus(), 50));
+  const onScroll = () => header.classList.toggle('scrolled', scrollY > 10);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const menu = $('#mobileMenu');
+  const setMenu = open => { menu.classList.toggle('open', open); menu.setAttribute('aria-hidden', !open); document.body.style.overflow = open ? 'hidden' : ''; };
+  $('#menuOpen').onclick = () => setMenu(true);
+  $('#menuClose').onclick = () => setMenu(false);
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+</script>
+</body>
+</html>

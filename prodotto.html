@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blackshape Store</title>
+<meta name="description" content="Lo shop ufficiale Blackshape: felpe, t-shirt, cappellini e accessori per chi vola.">
+<link rel="icon" href="assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Google+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* stessi token e componenti di home-2.html; struttura della pagina prodotto presa da nivisgear.com */
+  :root {
+    --bg: #0B0B0C;
+    --panel: #121214;
+    --panel-2: #1D1D1F;
+    --fg: #F5F5F7;
+    --soft: #C7C7CC;
+    --muted: #A1A1A6;
+    --line: rgba(255,255,255,.12);
+    --white: #FFF;
+    --black: #000;
+    --prime-blue: #1F4FD1;
+    --silver: #A7AAAF;
+    --tobacco: #A0582F;
+    --radius: 6px;
+    /* bottoni, input e select a pillola come sul sito Blackshape; per tornare squadrati: 6px */
+    --control-radius: 999px;
+    --gutter: clamp(16px, 3vw, 40px);
+    --blk: 52px;
+    --sans: Geist, Inter, system-ui, sans-serif;
+    --pixel: "Google Sans", Geist, sans-serif;
+    --pbg: #C7C9CA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button, select { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .wrap { max-width: 1520px; margin: 0 auto; padding: 0 var(--gutter); }
+  h1, h2, h3 { font-weight: 500; letter-spacing: -0.05em; line-height: .95; }
+  .px { font-family: var(--pixel); font-size: 13px; font-weight: 500; line-height: 1.35; text-transform: uppercase; letter-spacing: .06em; }
+  .px-muted { color: #B5B5BA; }
+  .blk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: var(--blk); padding: 0 24px; border-radius: var(--control-radius); font-family: var(--pixel); font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; transition: background .2s, color .2s; }
+  .blk-light { background: var(--white); color: var(--black); }
+  .blk-light:hover { background: #E3E3E8; }
+  .blk-dark { background: var(--panel-2); color: var(--fg); }
+  .blk-dark:hover { background: #2C2C2E; }
+  /* fondo da carta aeronautica (reticolo con coordinate, rosa VOR, aerovia, pista) */
+  .chart { position: absolute; inset: 0; background: url(assets/chart.svg) center / cover no-repeat; pointer-events: none; }
+
+  /* ---------- barra annunci + header (come home-2) ---------- */
+  .announce { position: relative; z-index: 60; background: var(--black); text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); color: var(--soft); }
+  .announce a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; }
+  .hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; }
+  .hdr > * { pointer-events: auto; }
+  .hdr::before { content: ""; position: absolute; inset: 0 0 -72px 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .35s ease;
+    background: linear-gradient(180deg, rgba(11,11,12,.92) 0%, rgba(11,11,12,.9) 30%, rgba(11,11,12,.84) 42%, rgba(11,11,12,.74) 52%, rgba(11,11,12,.6) 61%, rgba(11,11,12,.45) 70%, rgba(11,11,12,.3) 78%, rgba(11,11,12,.17) 86%, rgba(11,11,12,.07) 93%, rgba(11,11,12,0) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0,0,0,.6) 68%, rgba(0,0,0,.2) 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0,0,0,.6) 68%, rgba(0,0,0,.2) 86%, transparent 100%); }
+  .hdr.solid::before { opacity: 1; }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .brand .word { height: 32px; width: auto; transition: filter .3s; }
+  /* sopra i fondi chiari del prodotto il logo testuale diventa nero */
+  .hdr.light .brand .word { filter: invert(1); }
+  .hdr.light .brand .store { color: #0B0B0C; border-color: rgba(0,0,0,.3); }
+  .cluster { display: flex; gap: 8px; }
+  .brand .store { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.35); font-size: 15px; line-height: 28px; color: var(--fg); transition: color .3s, border-color .3s; }
+  .cluster .blk { min-width: 124px; }
+
+  /* ---------- pannelli laterali ---------- */
+  .scrim { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.35); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  .scrim.on { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; z-index: 80; top: 12px; right: 12px; bottom: 12px; width: min(520px, calc(100vw - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .drawer.open { transform: none; }
+  .drawer header { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+  .drawer .close { font-family: var(--pixel); font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .drawer .close:hover { color: var(--fg); }
+  .drawer .body { flex: 1; overflow-y: auto; padding: 8px 22px; }
+  .drawer footer { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+  .drawer footer .blk { width: 100%; }
+  .line-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .line-item img { width: 72px; height: 84px; object-fit: cover; border-radius: 4px; }
+  .line-item strong { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  .line-item .px { margin-top: 6px; }
+  .shop-list a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+  .empty { padding: 40px 0; color: var(--soft); }
+  .total { display: flex; justify-content: space-between; align-items: baseline; }
+  .total strong { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+  .size-table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 16px; }
+  .size-table th, .size-table td { text-align: left; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .size-table th { font-family: var(--pixel); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .drawer .note { color: var(--soft); font-size: 15px; }
+
+  /* ---------- barra d'acquisto fissa ---------- */
+  .buy { position: fixed; z-index: 45; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(1320px, calc(100% - 2 * var(--gutter))); display: grid; grid-template-columns: 1.3fr auto auto auto; align-items: stretch; border-radius: 8px; background: rgba(30,30,33,.82); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); }
+  .buy > div { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-left: 1px solid var(--line); }
+  .buy > div:first-child { border-left: 0; justify-content: space-between; }
+  .buy .name { font-size: 24px; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
+  .buy .name span { display: block; color: var(--muted); }
+  .swatches { display: flex; gap: 6px; }
+  .swatches button { width: 20px; height: 20px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+  .swatches button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--white); }
+  .color-name { font-size: 15px; font-weight: 500; min-width: 90px; }
+  .size-select { position: relative; }
+  .size-select select { appearance: none; -webkit-appearance: none; height: var(--blk); min-width: 150px; padding: 0 44px 0 22px; border-radius: var(--control-radius); border: 1px solid rgba(255,255,255,.35); background: transparent; color: var(--fg); font-family: var(--pixel); font-size: 14px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+  .size-select select option { color: #000; }
+  .size-select::after { content: ""; position: absolute; right: 20px; top: 50%; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .size-select.error select { border-color: #FF5A4F; }
+  .guide-link { font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .buy .price { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; white-space: nowrap; }
+
+  /* ---------- hero prodotto ---------- */
+  .p-hero { position: relative; height: calc(100vh - var(--ann, 37px)); height: calc(100svh - var(--ann, 37px)); min-height: 600px; overflow: hidden; background: var(--black); }
+  .p-hero img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+  .p-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 45%, rgba(0,0,0,0) 65%), linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 65%, rgba(0,0,0,.5) 100%); }
+  .p-hero .label { position: absolute; z-index: 1; left: var(--gutter); top: calc(50% - 20px); max-width: 12ch; font-size: clamp(48px, 7vw, 110px); font-weight: 500; letter-spacing: -0.06em; line-height: .9; }
+
+  /* ---------- testo che si accende ---------- */
+  .statement { position: relative; padding: clamp(110px, 14vw, 200px) 0; overflow: hidden; }
+  .statement .text { position: relative; max-width: 960px; margin: 0 auto; font-size: clamp(34px, 4.6vw, 72px); font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
+  .w { color: #3A3A3C; transition: color .25s; }
+  .w.on { color: var(--fg); }
+
+  /* ---------- presentazione (galleria) ---------- */
+  .present { position: relative; height: 100vh; min-height: 640px; background: var(--pbg); overflow: hidden; }
+  .present .stage { position: absolute; inset: 0; display: grid; place-items: center; padding: 100px 0 120px; }
+  .present .stage img { height: 100%; width: auto; max-width: 100%; object-fit: contain; transition: opacity .35s; -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent 100%); mask-image: radial-gradient(closest-side, #000 78%, transparent 100%); }
+  .present.cover .stage img { -webkit-mask-image: none; mask-image: none; }
+  .present.cover .stage { padding: 0; grid-template-rows: minmax(0, 1fr); }
+  .present.cover .stage img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+  .gallery-thumbs { position: absolute; z-index: 2; left: var(--gutter); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
+  .gallery-thumbs button { width: 92px; height: 92px; border-radius: 4px; overflow: hidden; background: rgba(255,255,255,.3); outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .2s; }
+  .gallery-thumbs button[aria-pressed="true"] { outline-color: var(--black); }
+  .present.dark .gallery-thumbs button[aria-pressed="true"] { outline-color: var(--white); }
+  .gallery-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- scheda tecnica ---------- */
+  .specs { position: relative; padding: clamp(120px, 14vw, 200px) 0 clamp(120px, 12vw, 180px); overflow: hidden; }
+  .specs .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(.4) saturate(.8); transform: scale(1.1); }
+  .spec-card { position: relative; max-width: 760px; margin: 0 auto; background: rgba(22,22,24,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+  .spec-card .top { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .spec-card h2 { font-size: clamp(34px, 4vw, 58px); letter-spacing: -0.055em; padding: clamp(60px, 9vw, 120px) 0 28px; }
+  .spec-group { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
+  .spec-group ul { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--soft); font-size: 16px; }
+  .spec-group li::before { content: "·"; margin-right: 10px; color: var(--muted); }
+  .spec-group a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- sezioni funzione ---------- */
+  .feat-full { position: relative; height: 100vh; min-height: 640px; overflow: hidden; background: var(--black); }
+  .feat-full img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .feat-full img.top { object-position: 50% 12%; }
+  .feat-full::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,0) 70%), linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 30%); }
+  .feat-full .copy { position: absolute; z-index: 1; left: 0; right: 0; top: 120px; }
+  .feat-full h2 { font-size: clamp(40px, 5.4vw, 84px); letter-spacing: -0.06em; max-width: 13ch; margin-top: 16px; }
+  .feat-full p { position: absolute; z-index: 1; left: var(--gutter); bottom: 140px; max-width: 42ch; color: #E8E8ED; font-size: 18px; }
+  .feat-split { padding: clamp(100px, 12vw, 160px) 0; }
+  .feat-split h2 { font-size: clamp(40px, 5.4vw, 84px); letter-spacing: -0.06em; max-width: 16ch; margin-top: 16px; }
+  .feat-split .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 56px 0 0 clamp(0px, 16vw, 240px); }
+  .feat-split .pair img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 4px; }
+  .feat-split p { max-width: 52ch; color: var(--soft); font-size: 18px; margin: 40px 0 0 clamp(0px, 16vw, 240px); }
+  .feat-label { color: var(--fg); }
+
+  /* ---------- dettagli ---------- */
+  .details { position: relative; padding: clamp(100px, 12vw, 160px) 0; overflow: hidden; }
+  .details h2 { position: relative; font-size: clamp(40px, 5vw, 76px); letter-spacing: -0.06em; max-width: 18ch; margin-bottom: 56px; }
+  .det-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .det { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+  .det .media { aspect-ratio: 1 / 1; border-radius: 4px; overflow: hidden; background: var(--panel-2); }
+  .det .media img { width: 100%; height: 100%; object-fit: cover; }
+  .det button { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; text-align: left; padding: 22px 4px 6px; width: 100%; }
+  .det h3 { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.045em; line-height: 1.02; }
+  .det .plus { font-size: 26px; line-height: 1; color: var(--muted); transition: transform .25s; flex: none; }
+  .det.open .plus { transform: rotate(45deg); }
+  .det .tag { padding: 4px 4px 0; }
+  .det p { display: none; color: var(--soft); font-size: 16px; padding: 12px 4px 4px; }
+  .det.open p { display: block; }
+
+  /* ---------- metodo + servizi (come home-2) ---------- */
+  .method { padding: 0 0 clamp(80px, 10vw, 140px); }
+  /* servizi (come v1): un pannello diviso in tre, il dato grande è il protagonista */
+  .services { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  .service { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; align-content: start; padding: 28px clamp(20px, 2.6vw, 36px); } /* subgrid: righe allineate anche se una colonna va a capo */
+  .service + .service { border-left: 1px solid var(--line); }
+  .service .big { display: flex; align-items: center; min-height: 60px; font-size: clamp(40px, 3.8vw, 60px); font-weight: 500; letter-spacing: -0.06em; line-height: 1; }
+  .service .px { display: block; margin-top: 22px; color: var(--fg); }
+  .service p { color: var(--soft); font-size: 16px; margin-top: 6px; }
+  .pay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 60px; }
+  .pay span { height: 32px; padding: 0 14px; border: 1px solid rgba(255,255,255,.22); border-radius: var(--control-radius); font-family: var(--pixel); font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; display: grid; place-items: center; white-space: nowrap; }
+
+  /* ---------- recensioni: stato vuoto dichiarato ---------- */
+  .reviews { position: relative; padding: clamp(100px, 12vw, 160px) 0; border-top: 1px solid var(--line); overflow: hidden; }
+  .reviews .inner { position: relative; text-align: center; max-width: 720px; margin: 0 auto; }
+  .reviews h2 { font-size: clamp(40px, 5vw, 76px); letter-spacing: -0.06em; margin-top: 16px; }
+  .reviews p { color: var(--soft); margin: 20px auto 32px; max-width: 48ch; }
+
+  /* ---------- perché siamo diversi (card come la vetrina) ---------- */
+  .why { position: relative; padding: clamp(100px, 12vw, 160px) 0; overflow: hidden; }
+  .why .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.55); }
+  .pin { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; min-height: min(600px, calc(100vh - 160px)); padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; max-width: 1280px; margin: 0 auto; }
+  .pin .media { border-radius: 4px; overflow: hidden; }
+  .pin .media img { width: 100%; height: 100%; object-fit: cover; }
+  .pin .info { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; padding: 8px; }
+  .pin .info h3 { font-size: clamp(32px, 3.2vw, 54px); letter-spacing: -0.055em; line-height: .95; margin-bottom: auto; }
+  .pin .info h4 { font-size: clamp(26px, 2.2vw, 36px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.05; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pin .info p { color: var(--soft); font-size: 16px; }
+
+  /* ---------- altri prodotti ---------- */
+  .more { position: relative; padding: clamp(100px, 12vw, 160px) 0; overflow: hidden; }
+  .more .wrap { position: relative; }
+  .more .services { margin-top: 12px; }
+  .more .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 32px; }
+  .more h2 { font-size: clamp(36px, 4vw, 60px); margin-top: 12px; }
+  .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .mcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 14px; }
+  .mcard .media { aspect-ratio: 4 / 5; border-radius: 4px; overflow: hidden; }
+  .mcard .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .mcard:hover .media img { transform: scale(1.04); }
+  .mcard h3 { font-size: 22px; letter-spacing: -0.035em; line-height: 1.1; padding: 0 4px; }
+  .mcard .row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px 4px; border-top: 1px solid var(--line); margin-top: auto; }
+  .mcard .price { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+
+  /* testo direttamente sull'immagine (niente card): titolo in basso a sinistra, sfumatura per la lettura */
+  .overlay { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(32px, 7vh, 80px); }
+  .overlay .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; }
+  .overlay .copy { max-width: 780px; }
+  .overlay h1, .overlay h2 { font-size: clamp(56px, 7.4vw, 124px); letter-spacing: -0.06em; line-height: .9; margin-top: 18px; }
+  .overlay .copy > .blk { margin-top: 32px; }
+  .overlay .aside { flex: none; }
+  .overlay form { display: flex; gap: 8px; margin-top: 28px; max-width: 560px; }
+  .overlay input { flex: 1; min-width: 0; height: var(--blk); border-radius: var(--control-radius); border: 1px solid rgba(255,255,255,.3); background: rgba(11,11,12,.85); color: var(--fg); padding: 0 22px; font: inherit; font-size: 16px; }
+  .overlay input::placeholder { color: var(--muted); }
+  .overlay input:focus { outline: 2px solid var(--white); outline-offset: -1px; }
+  .overlay small { display: block; margin-top: 10px; color: #D1D1D6; font-size: 13px; }
+  /* qui la barra d'acquisto fissa occupa il fondo: il testo sale sopra di lei */
+  .closing .overlay { bottom: 150px; }
+  .shade::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,.3) 42%, rgba(0,0,0,0) 68%), linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 22%); }
+
+  /* ---------- chiusura + footer (come home-2) ---------- */
+  .closing { position: relative; height: 100vh; min-height: 640px; overflow: hidden; }
+  .closing > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  footer { padding: 64px 0 calc(130px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr) auto; gap: 32px; }
+  .foot-grid .word { height: 18px; width: auto; }
+  .foot-grid p { color: var(--soft); font-size: 15px; margin-top: 18px; max-width: 40ch; }
+  .foot-grid h4 { margin-bottom: 14px; color: var(--muted); font-weight: 500; }
+  .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--soft); }
+  .foot-grid a:hover { color: var(--fg); }
+  .to-top { width: var(--blk); padding: 0; }
+  .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(120px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; z-index: 90; background: var(--white); color: var(--black); padding: 12px 16px; border-radius: 4px; width: max-content; max-width: calc(100vw - 32px); transition: opacity .25s, transform .25s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .buy { grid-template-columns: 1fr auto auto; }
+    .buy .colors-cell { display: none; }
+    .pin { grid-template-columns: 1fr 1.3fr; }
+    .pin .media { aspect-ratio: 4 / 5; }
+    .more-grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    :root { --blk: 46px; }
+    .hdr { padding: 12px var(--gutter); }
+    .brand .word { height: 26px; }
+    .cluster .blk { min-width: 0; padding: 0 14px; }
+    .cluster .lbl { display: none; }
+    .brand { gap: 12px; }
+    .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
+    .buy { left: 0; right: 0; bottom: 0; transform: none; width: 100%; border-radius: 8px 8px 0 0; border-bottom: 0; grid-template-columns: 1fr; padding-bottom: env(safe-area-inset-bottom); }
+    .buy > div { border-left: 0; padding: 8px 12px; }
+    .buy > div:first-child { padding-top: 12px; }
+    .buy .name { font-size: 18px; }
+    .buy .name span { display: inline; margin-left: 6px; }
+    .buy .guide-link { display: none; }
+    .buy .guide-cell .size-select { flex: 1; }
+    .buy .guide-cell .size-select select { width: 100%; min-width: 0; }
+    .buy .action-cell { gap: 8px; padding-bottom: 12px; }
+    .buy .action-cell .blk { flex: 1; }
+    .buy .price { font-size: 20px; }
+    .p-hero .label { top: auto; bottom: 250px; }
+    .gallery-thumbs { top: auto; bottom: 220px; transform: none; flex-direction: row; left: 50%; translate: -50% 0; }
+    .gallery-thumbs button { width: 56px; height: 56px; }
+    .present .stage { padding: 90px 0 300px; }
+    .spec-group { grid-template-columns: 1fr; gap: 10px; }
+    .feat-full p { bottom: 240px; right: var(--gutter); }
+    .feat-split .pair, .feat-split p { margin-left: 0; }
+    .det-grid { grid-template-columns: 1fr; }
+    .pin { grid-template-columns: 1fr; }
+    .overlay .wrap { flex-direction: column; align-items: stretch; gap: 20px; }
+    .overlay .copy > .blk, .overlay .aside .blk { width: 100%; }
+    .overlay .scroll-hint { display: none; }
+    .overlay form { flex-direction: column; }
+    .overlay input { flex: none; }
+    .closing .overlay { bottom: 210px; }
+    .closing.shade::after { background: linear-gradient(0deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.6) 55%, rgba(0,0,0,.1) 85%); }
+    .services { grid-template-columns: 1fr; }
+    .service + .service { border-left: 0; border-top: 1px solid var(--line); }
+            .foot-grid > :last-child { grid-column: 1 / -1; }
+    footer { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(230px + env(safe-area-inset-bottom)); }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .px { font-size: 12px; }
+    .blk { font-size: 13px; }
+    .announce a { display: none; }
+    .more-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mcard h3 { font-size: 17px; }
+    .mcard .row { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .spec-card .top span { white-space: nowrap; }
+    .spec-card .top span:nth-child(3) { display: none; }
+    .foot-grid > div:first-child { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .w { color: var(--fg); } }
+</style>
+</head>
+<body>
+
+<div class="announce px">Spedizione gratuita sopra 150 €<a href="home-2.html#linea">Vedi la linea</a></div>
+
+<header class="hdr" id="hdr">
+  <a href="home-2.html" class="brand" aria-label="Blackshape Store, home">
+    <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+    <span class="store px">Store</span>
+  </a>
+  <div class="cluster">
+    <button class="blk blk-dark" id="cartBtn" aria-label="Carrello"><svg width="21" height="18" viewBox="0 0 75 66" fill="currentColor" aria-hidden="true"><path d="m38 29.1c-0.7 0-1.4-0.4-1.8-1.1l-6.4-12.8c-1.8-3.5-0.8-7.8 2.4-10.1 1.4-1.1 3.1-1.6 4.8-1.6 2.7 0 5.2 1.3 6.7 3.6l12.8 18.8c0.6 1 0.3 2.2-0.6 2.8-0.9 0.7-2.1 0.4-2.8-0.5l-12.7-18.9c-0.8-1.1-2.1-1.8-3.4-1.8-0.9 0-1.7 0.3-2.4 0.8-1.6 1.2-2.1 3.3-1.2 5.1l6.4 12.8c0.5 1 0.1 2.2-0.9 2.7q-0.4 0.2-0.9 0.2z"/><path d="m37 62.5c-1.7 0-3.4-0.6-4.8-1.6-3.2-2.3-4.2-6.6-2.4-10.1l5-9.9h-14.6c-2.9 0-5.5-1.2-7.3-3.4l-8.9-10.9c-1.2-1.5-1.8-3.5-1.6-5.4 0.2-2 1.2-3.8 2.7-5 1.4-1 3-1.6 4.6-1.6 1.8 0 3.6 0.6 4.9 1.8l9.8 8.7h39.1c4.1 0 7.6 2.9 8.1 6.9 0.3 2.2-0.4 4.5-1.9 6.2-1.5 1.8-3.7 2.7-6 2.7h-7.8l-12.2 18.1c-1.5 2.2-4 3.5-6.7 3.5zm-27.3-43.9c-0.7 0-1.5 0.2-2.1 0.7-0.7 0.6-1.1 1.4-1.2 2.3-0.1 0.9 0.2 1.8 0.7 2.5l8.9 10.8c1 1.3 2.6 2 4.2 2h17.8c0.7 0 1.4 0.4 1.7 1 0.4 0.6 0.4 1.3 0.1 1.9l-6.4 12.8c-0.9 1.8-0.4 3.9 1.2 5.1 0.7 0.5 1.5 0.8 2.4 0.8 1.3 0 2.6-0.7 3.4-1.8l12.7-18.9c0.4-0.5 1-0.9 1.7-0.9h8.9c1.1 0 2.2-0.5 2.9-1.3 0.8-0.9 1.1-2 1-3.1-0.3-2-2-3.4-4.1-3.4h-39.9c-0.5 0-0.9-0.2-1.3-0.5l-10.3-9.2c-0.7-0.5-1.4-0.8-2.3-0.8z"/></svg><span class="lbl">Carrello ·</span> <span id="cartCount">0</span></button>
+    <button class="blk blk-light" id="shopBtn">Shop <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"/></svg></button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="shopDrawer" aria-label="Esplora la linea" aria-hidden="true">
+  <header><span class="px">Esplora la linea</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body shop-list" id="shopList"></div>
+  <footer><a href="shop-2.html" class="blk blk-light">Vedi tutti i prodotti <span>→</span></a></footer>
+</aside>
+
+<aside class="drawer" id="cartDrawer" aria-label="Carrello" aria-hidden="true">
+  <header><span class="px"><b id="cartItemsCount">0</b> articoli nel carrello</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body" id="cartList"></div>
+  <footer>
+    <div class="total"><span class="px px-muted">Totale</span><strong id="cartTotal">0 €</strong></div>
+    <span class="px px-muted">Spedizione calcolata al checkout</span>
+    <a href="#" class="blk blk-light">Vai al checkout <span>→</span></a>
+  </footer>
+</aside>
+
+<aside class="drawer" id="sizeDrawer" aria-label="Guida alle taglie" aria-hidden="true">
+  <header><span class="px">Guida alle taglie</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body">
+    <table class="size-table">
+      <thead><tr><th>Taglia</th><th>Torace</th><th>Vita</th><th>Manica</th></tr></thead>
+      <tbody>
+        <tr><td>XS</td><td>86-90</td><td>72-76</td><td>60</td></tr>
+        <tr><td>S</td><td>90-96</td><td>76-82</td><td>62</td></tr>
+        <tr><td>M</td><td>96-102</td><td>82-88</td><td>64</td></tr>
+        <tr><td>L</td><td>102-108</td><td>88-94</td><td>66</td></tr>
+        <tr><td>XL</td><td>108-116</td><td>94-102</td><td>67</td></tr>
+        <tr><td>XXL</td><td>116-124</td><td>102-110</td><td>68</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Misure in centimetri. Felpa e t-shirt sono unisex: se sei tra due taglie, scegli la più grande.</p>
+  </div>
+</aside>
+
+<!-- barra d'acquisto: resta fissa su tutta la pagina -->
+<div class="buy" id="buy">
+  <div><strong class="name" id="buyName"></strong><span class="px px-muted" id="buyStock"></span></div>
+  <div class="colors-cell"><span class="swatches" id="swatches"></span><span class="color-name" id="colorName"></span></div>
+  <div class="guide-cell"><label class="size-select" id="sizeWrap"><select id="size" aria-label="Taglia"></select></label><button class="guide-link" data-open="size">Guida taglie</button></div>
+  <div class="action-cell"><span class="price" id="buyPrice"></span><button class="blk blk-light" id="addBtn">Aggiungi al carrello</button></div>
+</div>
+
+<main>
+  <section class="p-hero" data-light="false">
+    <img id="heroImg" alt="">
+    <h1 class="label" id="heroTitle"></h1>
+  </section>
+
+  <section class="statement">
+    <div class="chart" aria-hidden="true"></div>
+    <p class="text wrap" id="statement"></p>
+  </section>
+
+  <section class="present" id="present" data-light="true">
+    <div class="gallery-thumbs" id="thumbs"></div>
+    <div class="stage"><img id="stageImg" alt=""></div>
+  </section>
+
+  <section class="specs" id="specs">
+    <img class="bgimg" src="assets/formation.webp" alt="">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="spec-card wrap">
+      <div class="top px"><span>Scheda tecnica</span><span class="px-muted">40°57′N 17°18′E · Monopoli</span></div>
+      <h2 id="specTitle"></h2>
+      <div id="specGroups"></div>
+    </div>
+  </section>
+
+  <div id="features"></div>
+
+  <!-- recensioni nascoste per ora: togliere il commento per rimetterle
+  <section class="reviews">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="inner wrap">
+      <span class="px px-muted">Recensioni</span>
+      <h2>Ancora nessuna recensione.</h2>
+      <p>Le recensioni verificate di chi ha volato con questo capo compariranno qui. Hai già il tuo? Raccontaci com'è andato in cabina.</p>
+      <a href="#" class="blk blk-dark">Scrivi la prima recensione <span>✎</span></a>
+    </div>
+  </section>
+  -->
+
+  <section class="why">
+    <img class="bgimg" src="assets/v-apron.webp" alt="">
+    <div class="wrap">
+      <div class="pin">
+        <div class="media"><img src="assets/v-pilot.webp" alt="Pilota Blackshape in volo"></div>
+        <div class="info">
+          <h3>Lo stesso marchio dei nostri aerei.</h3>
+          <h4>Blackshape Aircraft</h4>
+          <p>Blackshape costruisce aerei biposto in fibra di carbonio. Sugli oggetti dello Store trovi lo stesso logo che portano i nostri aerei.</p>
+          <a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener" class="blk blk-dark">Scopri Blackshape <span>↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="more">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="head">
+        <div><span class="px px-muted">Esplora la linea</span><h2>Completa la dotazione.</h2></div>
+        <a href="shop-2.html" class="blk blk-dark">Tutti i prodotti <span>→</span></a>
+      </div>
+      <div class="more-grid" id="moreGrid"></div>
+      <div class="services">
+      <div class="service"><span class="big">2-4 giorni</span><span class="px">Consegna in UE</span><p>Gratuita per gli ordini sopra 150 €.</p></div>
+      <div class="service"><span class="big">30 giorni</span><span class="px">Per il reso</span><p>Il cambio taglia è gratuito.</p></div>
+      <div class="service"><div class="pay"><span>Carte</span><span>PayPal</span><span>Apple Pay</span><span>Bonifico</span></div><span class="px">Pagamenti sicuri</span><p>Transazioni protette, nessun dato di carta salvato.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing shade">
+    <img src="assets/gabriel-apron.webp" alt="Aerei Blackshape sul piazzale" style="object-position:70% 50%">
+    <div class="overlay">
+      <div class="wrap">
+        <div class="copy">
+          <span class="px">Pre-flight briefing · Una mail al mese</span>
+          <h2>Il cielo è di chi lo insegue.</h2>
+          <form id="nl">
+            <input type="email" required placeholder="La tua email" aria-label="Email">
+            <button class="blk blk-light" type="submit">Iscriviti</button>
+          </form>
+          <small>Iscrivendoti accetti di ricevere la newsletter di Blackshape Store.</small>
+        </div>
+        <div class="aside"><a href="home-2.html#linea" class="blk blk-dark">Esplora la linea <span>↑</span></a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+        <p>Lo shop ufficiale Blackshape: abbigliamento e accessori per chi vola.</p>
+      </div>
+      <div><h4 class="px">I prodotti</h4><ul id="footProducts"></ul></div>
+      <div><h4 class="px">Assistenza</h4><ul><li><a href="#" data-open="size">Guida alle taglie</a></li><li><a href="#">Spedizioni e resi</a></li><li><a href="home-2.html#faq">Domande frequenti</a></li><li><a href="#">Contatti</a></li></ul></div>
+      <div><h4 class="px">Blackshape</h4><ul><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Sito ufficiale</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Aerei</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Scuola di volo</a></li></ul></div>
+      <div><a href="#" class="blk blk-dark to-top" aria-label="Torna su"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a></div>
+    </div>
+    <div class="legal px"><span>© 2026 Blackshape S.p.A. · Strada Statale 16 km 841, Monopoli (BA) · Made in Never Before Italia</span><span><a href="#">Privacy</a> · <a href="#">Cookie</a> · <a href="#">Condizioni di vendita</a></span></div>
+  </div>
+</footer>
+
+<div class="toast px" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // catalogo provvisorio: foto, prezzi e dettagli da confermare con Blackshape
+  const products = [
+    { id: 'cappellino', name: 'Cappellino Blackshape', short: ['Cappellino', 'Blackshape'], price: 35, stock: 'Disponibile', img: 'assets/shop/f-cappellino.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-cappellino.webp',
+      statement: 'Cappellino con visiera curva e logo Blackshape sul davanti. Si regola sul retro, quindi va bene a tutti.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }, { n: 'Bianco', c: '#FFFFFF' }], sizes: ['Taglia unica'],
+      gallery: ['assets/shop/f-cappellino.webp'],
+      specTitle: 'Il logo Blackshape, sulla visiera.',
+      specs: { 'Modello': ['Visiera curva', 'Chiusura regolabile sul retro'], 'Logo': ['Blackshape, sul davanti'] } },
+    { id: 'bottiglia', name: 'Bottiglia in acciaio 500 ml', short: ['Bottiglia', 'in acciaio 500 ml'], price: 29, stock: 'Disponibile', img: 'assets/shop/f-bottiglia.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-bottiglia.webp',
+      statement: 'Mezzo litro in acciaio inossidabile riciclato, con tappo a vite. Al posto delle bottigliette di plastica in borsa.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }, { n: 'Grigio', c: '#8E8E93' }], sizes: ['500 ml'],
+      gallery: ['assets/shop/f-bottiglia.webp', 'assets/v-apron.webp'],
+      specTitle: 'Acciaio inossidabile riciclato.',
+      specs: { 'Materiale': ['Acciaio inossidabile riciclato'], 'Capacità': ['500 ml'], 'Chiusura': ['Tappo a vite'] } },
+    { id: 'felpa', name: 'Felpa girocollo unisex', short: ['Felpa girocollo', 'unisex'], price: 69, stock: 'Disponibile', img: 'assets/shop/f-felpa.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-felpa.webp',
+      statement: 'Cotone e poliestere rigenerati, 280 grammi al metro quadro. Girocollo, taglio unisex e logo Blackshape sul petto.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }, { n: 'Grigio', c: '#8E8E93' }, { n: 'Bianco', c: '#FFFFFF' }], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: ['assets/shop/f-felpa.webp'],
+      specTitle: 'Cotone e poliestere rigenerati.',
+      specs: { 'Materiale': ['Cotone e poliestere rigenerati', '280 g/m²'], 'Modello': ['Girocollo', 'Unisex'], 'Taglie': ['Dalla XS alla XXL', '__guide'] } },
+    { id: 'agenda', name: 'Agenda Blackshape', short: ['Agenda', 'Blackshape'], price: 25, stock: 'Disponibile', img: 'assets/shop/f-agenda.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-agenda.webp',
+      statement: 'Copertina nera con il logo Blackshape. Per segnare voli, appunti e scadenze, dal rinnovo della licenza alla prossima revisione.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['Formato unico'],
+      gallery: ['assets/shop/f-agenda.webp', 'assets/v-cockpit.webp'],
+      specTitle: 'Voli, appunti e scadenze.',
+      specs: { 'Copertina': ['Nera, con logo Blackshape'] } },
+    { id: 'tshirt', name: 'T-shirt Blackshape', short: ['T-shirt', 'Blackshape'], price: 35, stock: 'Disponibile', img: 'assets/shop/f-tshirt.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-tshirt.webp',
+      statement: 'T-shirt girocollo in cotone con il logo Blackshape.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }, { n: 'Bianco', c: '#FFFFFF' }], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: ['assets/shop/f-tshirt.webp'],
+      specTitle: 'Cotone, logo Blackshape.',
+      specs: { 'Materiale': ['Cotone'], 'Modello': ['Girocollo'], 'Taglie': ['Dalla XS alla XXL', '__guide'] } },
+    { id: 'zaino', name: 'Zaino aeronautico', short: ['Zaino', 'aeronautico'], price: 119, stock: 'Disponibile', img: 'assets/shop/f-zaino.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-zaino.webp',
+      statement: 'Zaino nero con il logo Blackshape, con spazio per cuffie, documenti di volo e tablet.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['Taglia unica'],
+      gallery: ['assets/shop/f-zaino.webp', 'assets/v-apron.webp'],
+      specTitle: 'Cuffie, documenti e tablet in spalla.',
+      specs: { 'Contenuto': ['Cuffie', 'Documenti di volo', 'Tablet'], 'Logo': ['Blackshape'] } },
+    { id: 'borsa', name: 'Borsa pilota', short: ['Borsa', 'pilota'], price: 99, stock: 'Disponibile', img: 'assets/shop/f-borsa.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-borsa.webp',
+      statement: 'Borsa nera con il logo Blackshape, per portare a bordo cuffie, carte e documenti di volo.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['Taglia unica'],
+      gallery: ['assets/shop/f-borsa.webp', 'assets/prime-veloce.webp'],
+      specTitle: 'La borsa di chi vola.',
+      specs: { 'Contenuto': ['Cuffie', 'Carte', 'Documenti di volo'], 'Logo': ['Blackshape'] } },
+    { id: 'kneeboard', name: 'Kneeboard', short: ['Kneeboard', 'Blackshape'], price: 39, stock: 'Disponibile', img: 'assets/shop/f-kneeboard.webp', pbg: '#1D1D1F', fit: 'cover', dark: true,
+      hero: 'assets/shop/f-kneeboard.webp',
+      statement: 'Tavoletta da coscia con cinghia regolabile: carte, checklist e appunti restano sulla gamba anche in volo.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['Taglia unica'],
+      gallery: ['assets/shop/f-kneeboard.webp', 'assets/v-cockpit.webp'],
+      specTitle: 'Carte e appunti sulla gamba.',
+      specs: { 'Uso': ['Carte, checklist e appunti'], 'Fissaggio': ['Cinghia regolabile sulla coscia'], 'Logo': ['Blackshape'] } },
+  ];
+
+  const $ = s => document.querySelector(s);
+  // blocchi a tutta foto sotto la scheda tecnica: [etichetta, titolo, testo, foto]; senza foto usa quella del prodotto
+  const feats = {
+    cappellino: [['Modello', 'Visiera curva, chiusura regolabile.', 'Logo Blackshape sul davanti. Disponibile in nero e in bianco.'],
+                 ['Vestibilità', 'Taglia unica.', 'La chiusura sul retro regola la circonferenza.', 'assets/v-apron.webp']],
+    bottiglia:  [['Materiale', 'Acciaio inossidabile riciclato.', 'Capacità 500 ml. Chiusura con tappo a vite.'],
+                 ['Colori', 'Nero o grigio.', 'Stesso modello e stessa capacità nei due colori.', 'assets/gabriel-apron.webp']],
+    felpa:      [['Materiale', 'Cotone e poliestere rigenerati.', 'Grammatura 280 g/m².'],
+                 ['Modello', 'Girocollo, taglio unisex.', 'Taglie dalla XS alla XXL. Logo Blackshape sul petto.', 'assets/prime-veloce.webp']],
+    agenda:     [['Copertina', 'Nera, con logo Blackshape.', 'Formato unico.'],
+                 ['Uso', 'Voli, appunti e scadenze.', 'Dalla pianificazione dei voli al rinnovo della licenza.', 'assets/v-cockpit.webp']],
+    tshirt:     [['Materiale', 'Cotone, girocollo.', 'Logo Blackshape. Disponibile in nero e in bianco.'],
+                 ['Taglie', 'Dalla XS alla XXL.', 'Le misure di ogni taglia sono nella guida taglie.', 'assets/formation.webp']],
+    zaino:      [['Contenuto', 'Cuffie, documenti di volo e tablet.', 'Colore nero, logo Blackshape.'],
+                 ['Uso', 'Per l\'attrezzatura di volo.', 'Si porta in spalla. Taglia unica.', 'assets/gabriel-apron.webp']],
+    borsa:      [['Contenuto', 'Cuffie, carte e documenti di volo.', 'Colore nero, logo Blackshape.'],
+                 ['Trasporto', 'A tracolla o a mano.', 'Tracolla e manici. Taglia unica.', 'assets/v-pilot.webp']],
+    kneeboard:  [['Fissaggio', 'Cinghia regolabile sulla coscia.', 'La tavoletta resta in posizione durante il volo.'],
+                 ['Uso', 'Carte, checklist e appunti.', 'Un piano di scrittura sulla gamba, per annotare frequenze e istruzioni.', 'assets/v-pilot.webp']],
+  };
+
+  const params = new URLSearchParams(location.search);
+  const p = products.find(x => x.id === params.get('id')) || products[0];
+  document.title = p.name + ' | Blackshape Store';
+  document.documentElement.style.setProperty('--pbg', p.pbg);
+
+  // hero + testo
+  $('#heroImg').src = p.hero; $('#heroImg').alt = p.name;
+  $('#heroTitle').textContent = p.name.replace(/-/g, '‑'); // trattino che non va a capo (T-shirt)
+  $('#statement').textContent = p.statement;
+
+  // galleria
+  const present = $('#present');
+  present.classList.toggle('cover', p.fit === 'cover');
+  present.classList.toggle('dark', !!p.dark);
+  present.dataset.light = String(!p.dark);
+  const stage = $('#stageImg');
+  const setStage = src => { stage.style.opacity = 0; setTimeout(() => { stage.src = src; stage.style.opacity = 1; }, 150); };
+  stage.src = p.gallery[0]; stage.alt = p.name;
+  $('#thumbs').innerHTML = p.gallery.map((g, i) => `<button aria-pressed="${i === 0}" aria-label="Immagine ${i + 1}"><img src="${g}" alt=""></button>`).join('');
+  document.querySelectorAll('#thumbs button').forEach((b, i) => b.onclick = () => {
+    document.querySelectorAll('#thumbs button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    // la foto prodotto resta sul fondo pieno, le foto d'ambiente riempiono lo spazio
+    present.classList.toggle('cover', i > 0 || p.fit === 'cover');
+    setStage(p.gallery[i]);
+  });
+
+  // barra d'acquisto
+  $('#buyName').innerHTML = `${p.short[0]}<span>${p.short[1]}</span>`;
+  $('#buyStock').textContent = p.stock;
+  $('#buyPrice').textContent = p.price + ' €';
+  let color = p.colors[0];
+  $('#swatches').innerHTML = p.colors.map((c, i) => `<button style="background:${c.c}" aria-label="${c.n}" aria-pressed="${i === 0}"></button>`).join('');
+  $('#colorName').textContent = color.n;
+  document.querySelectorAll('#swatches button').forEach((b, i) => b.onclick = () => {
+    color = p.colors[i]; $('#colorName').textContent = color.n;
+    document.querySelectorAll('#swatches button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  const size = $('#size');
+  size.innerHTML = p.sizes.length > 1 ? '<option value="">Scegli la taglia</option>' + p.sizes.map(s => `<option>${s}</option>`).join('') : `<option>${p.sizes[0]}</option>`;
+  size.onchange = () => $('#sizeWrap').classList.remove('error');
+  if (p.sizes.length === 1) document.querySelector('.guide-link').hidden = true;
+
+  // scheda tecnica
+  $('#specTitle').textContent = p.specTitle;
+  $('#specGroups').innerHTML = Object.entries(p.specs).map(([k, list]) => `<div class="spec-group"><span class="px">${k}</span><ul>${list.map(li => li === '__guide' ? '<li><a href="#" data-open="size">Guida alle taglie</a></li>' : `<li>${li}</li>`).join('')}</ul></div>`).join('');
+
+
+
+  // blocchi a tutta foto
+  $('#features').innerHTML = feats[p.id].map(([label, title, text, img]) =>
+    `<section class="feat-full" data-light="false"><img src="${img || p.img}"${img ? '' : ' class="top"'} alt="" loading="lazy"><div class="copy wrap"><span class="px feat-label">${label}</span><h2>${title}</h2></div><p>${text}</p></section>`).join('');
+
+  // altri prodotti, lista shop, footer
+  const url = x => `prodotto.html?id=${x.id}`;
+  $('#moreGrid').innerHTML = products.filter(x => x !== p).slice(0, 4).map(x => `<a href="${url(x)}" class="mcard"><div class="media"><img src="${x.img}" alt="${x.name}" loading="lazy"></div><h3>${x.name}</h3><div class="row"><span class="price">${x.price} €</span><span class="px px-muted">Dettagli ↗</span></div></a>`).join('');
+  $('#shopList').innerHTML = products.map(x => `<a href="${url(x)}" class="line-item"><img src="${x.img}" alt=""><div><strong>${x.name}</strong><span class="px px-muted">${x.stock}</span></div><span class="px">${x.price} €</span></a>`).join('');
+  $('#footProducts').innerHTML = products.map(x => `<li><a href="${url(x)}">${x.name}</a></li>`).join('');
+
+  // header: segue la barra annunci; fascia scura dopo la hero, logo nero sui fondi chiari
+  const hdr = $('#hdr'), announce = $('.announce');
+  const setAnn = () => document.documentElement.style.setProperty('--ann', announce.offsetHeight + 'px');
+  setAnn(); addEventListener('resize', setAnn);
+  const sections = [...document.querySelectorAll('main > section, #features > section')];
+  const onScroll = () => {
+    hdr.style.top = Math.max(announce.getBoundingClientRect().bottom, 0) + 'px';
+    const under = sections.find(s => { const r = s.getBoundingClientRect(); return r.top <= 60 && r.bottom > 60; });
+    const light = under && under.dataset.light === 'true';
+    hdr.classList.toggle('light', !!light);
+    hdr.classList.toggle('solid', !light && !!under && !under.classList.contains('p-hero') && !under.classList.contains('feat-full'));
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // pannelli
+  const scrim = $('#scrim');
+  const drawers = { shop: $('#shopDrawer'), cart: $('#cartDrawer'), size: $('#sizeDrawer') };
+  const openDrawer = name => { Object.entries(drawers).forEach(([k, d]) => { d.classList.toggle('open', k === name); d.setAttribute('aria-hidden', k !== name); }); scrim.classList.toggle('on', !!name); };
+  $('#shopBtn').onclick = () => openDrawer('shop');
+  $('#cartBtn').onclick = () => openDrawer('cart');
+  scrim.onclick = () => openDrawer(null);
+  document.addEventListener('click', e => {
+    if (e.target.closest('[data-close]')) openDrawer(null);
+    const o = e.target.closest('[data-open]'); if (o) { e.preventDefault(); openDrawer(o.dataset.open); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') openDrawer(null); });
+
+  // carrello
+  const cart = [];
+  const toast = $('#toast');
+  const show = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(show.t); show.t = setTimeout(() => toast.classList.remove('show'), 2200); };
+  function renderCart() {
+    $('#cartCount').textContent = cart.length;
+    $('#cartItemsCount').textContent = cart.length;
+    $('#cartTotal').textContent = cart.reduce((s, x) => s + x.price, 0) + ' €';
+    $('#cartList').innerHTML = cart.length ? cart.map(x => `<div class="line-item"><img src="${x.img}" alt=""><div><strong>${x.name}</strong><span class="px px-muted">${x.color} · ${x.size}</span></div><span class="px">${x.price} €</span></div>`).join('')
+      : '<p class="empty">Il carrello è vuoto.</p>';
+  }
+  renderCart();
+  $('#addBtn').onclick = () => {
+    if (!size.value) { $('#sizeWrap').classList.add('error'); size.focus(); show('Scegli la taglia'); return; }
+    cart.push({ ...p, color: color.n, size: size.value }); renderCart(); show(p.name + ' aggiunto'); openDrawer('cart');
+  };
+  $('#nl').onsubmit = e => { e.preventDefault(); e.target.reset(); show('Iscrizione confermata'); };
+
+  // testo che si accende parola per parola
+  const st = $('#statement');
+  st.innerHTML = st.textContent.split(' ').map(w => `<span class="w">${w}</span>`).join(' ');
+  const words = [...st.querySelectorAll('.w')];
+  const light = () => {
+    const r = st.getBoundingClientRect();
+    const k = Math.min(Math.max((innerHeight * 0.85 - r.top) / (r.height + innerHeight * 0.3), 0), 1);
+    words.forEach((w, i) => w.classList.toggle('on', i < k * words.length * 1.15));
+  };
+  addEventListener('scroll', light, { passive: true }); light();
+</script>
+</body>
+</html>

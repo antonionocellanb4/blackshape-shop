@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tutti i prodotti | Blackshape Store</title>
+<meta name="description" content="Lo shop ufficiale Blackshape: felpe, t-shirt, cappellini e accessori per chi vola.">
+<link rel="icon" href="assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Google+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* identità Blackshape: monocromo; struttura presa da nivisgear.com */
+    --bg: #0B0B0C;
+    --panel: #121214;
+    --panel-2: #1D1D1F;
+    --fg: #F5F5F7;
+    --soft: #C7C7CC;
+    --muted: #A1A1A6;
+    --line: rgba(255,255,255,.12);
+    --white: #FFF;
+    --black: #000;
+    --prime-blue: #1F4FD1;
+    --silver: #A7AAAF;
+    --tobacco: #A0582F;
+    --radius: 6px;
+    /* bottoni, input e select a pillola come sul sito Blackshape; per tornare squadrati: 6px */
+    --control-radius: 999px;
+    --gutter: clamp(16px, 3vw, 40px);
+    --blk: 52px;
+    --sans: Geist, Inter, system-ui, sans-serif;
+    --pixel: "Google Sans", Geist, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .wrap { max-width: 1520px; margin: 0 auto; padding: 0 var(--gutter); }
+  h1, h2, h3 { font-weight: 500; letter-spacing: -0.05em; line-height: .95; }
+
+  /* etichette: maiuscolo spaziato, come le etichette del sito Blackshape */
+  .px { font-family: var(--pixel); font-size: 13px; font-weight: 500; line-height: 1.35; text-transform: uppercase; letter-spacing: .06em; }
+  .px-muted { color: #B5B5BA; }
+
+  /* blocchi (bottoni) */
+  .blk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: var(--blk); padding: 0 24px; border-radius: var(--control-radius); font-family: var(--pixel); font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; transition: background .2s, color .2s; }
+  .blk-light { background: var(--white); color: var(--black); }
+  .blk-light:hover { background: #E3E3E8; }
+  .blk-dark { background: var(--panel-2); color: var(--fg); }
+  .blk-dark:hover { background: #2C2C2E; }
+  .rule { height: 1px; background: var(--line); }
+
+  /* ---------- barra annunci ---------- */
+  .announce { position: relative; z-index: 60; background: var(--black); text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); color: var(--soft); }
+  .announce a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; }
+
+  /* ---------- header ---------- */
+  .hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; transition: top .3s; }
+  .hdr > * { pointer-events: auto; }
+  /* dopo la hero: fascia che sfuma, cosi i blocchi non finiscono sopra il testo */
+  .hdr::before { content: ""; position: absolute; inset: 0 0 -72px 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .35s ease;
+    background: linear-gradient(180deg, rgba(11,11,12,.92) 0%, rgba(11,11,12,.9) 30%, rgba(11,11,12,.84) 42%, rgba(11,11,12,.74) 52%, rgba(11,11,12,.6) 61%, rgba(11,11,12,.45) 70%, rgba(11,11,12,.3) 78%, rgba(11,11,12,.17) 86%, rgba(11,11,12,.07) 93%, rgba(11,11,12,0) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0,0,0,.6) 68%, rgba(0,0,0,.2) 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0,0,0,.6) 68%, rgba(0,0,0,.2) 86%, transparent 100%); }
+  .hdr.solid::before { opacity: 1; }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .brand .word { height: 32px; width: auto; }
+  .cluster { display: flex; gap: 8px; }
+  .brand .store { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.35); font-size: 15px; line-height: 28px; color: var(--fg); transition: color .3s, border-color .3s; }
+  .cluster .blk { min-width: 124px; }
+  /* miniature prodotti: compaiono sulla vetrina */
+  .thumbs { margin-left: auto; display: flex; gap: 5px; padding: 5px; border-radius: 8px; background: rgba(18,18,20,.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity .3s, transform .3s, visibility .3s; }
+  .thumbs.on { opacity: 1; visibility: visible; transform: none; }
+  .thumbs button { width: 46px; height: 52px; border-radius: 4px; overflow: hidden; opacity: .55; transition: opacity .2s, outline-color .2s; outline: 2px solid transparent; outline-offset: -2px; }
+  .thumbs button:hover { opacity: .85; }
+  .thumbs button.active { opacity: 1; outline-color: var(--white); }
+  .thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- pannelli laterali (shop e carrello) ---------- */
+  .scrim { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.35); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  .scrim.on { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; z-index: 80; top: 12px; right: 12px; bottom: 12px; width: min(520px, calc(100vw - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .drawer.open { transform: none; }
+  .drawer header { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+  .drawer .close { font-family: var(--pixel); font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .drawer .close:hover { color: var(--fg); }
+  .drawer .body { flex: 1; overflow-y: auto; padding: 8px 22px; }
+  .drawer footer { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+  .line-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .line-item img { width: 72px; height: 84px; object-fit: cover; border-radius: 4px; }
+  .line-item strong { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  .line-item .px { margin-top: 6px; }
+  .shop-list a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+  .empty { padding: 40px 0; color: var(--soft); }
+  .total { display: flex; justify-content: space-between; align-items: baseline; }
+  .total strong { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+  .drawer footer .blk { width: 100%; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; height: calc(100vh - var(--ann, 37px)); height: calc(100svh - var(--ann, 37px)); min-height: 640px; overflow: hidden; background: var(--black); }
+  .hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* testo direttamente sull'immagine (niente card): titolo in basso a sinistra, sfumatura per la lettura */
+  .overlay { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(32px, 7vh, 80px); }
+  .overlay .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; }
+  .overlay .copy { max-width: 780px; }
+  .overlay h1, .overlay h2 { font-size: clamp(56px, 7.4vw, 124px); letter-spacing: -0.06em; line-height: .9; margin-top: 18px; }
+  .overlay .copy > .blk { margin-top: 32px; }
+  .overlay .aside { flex: none; }
+  .overlay form { display: flex; gap: 8px; margin-top: 28px; max-width: 560px; }
+  .overlay input { flex: 1; min-width: 0; height: var(--blk); border-radius: var(--control-radius); border: 1px solid rgba(255,255,255,.3); background: rgba(11,11,12,.85); color: var(--fg); padding: 0 22px; font: inherit; font-size: 16px; }
+  .overlay input::placeholder { color: var(--muted); }
+  .overlay input:focus { outline: 2px solid var(--white); outline-offset: -1px; }
+  .overlay small { display: block; margin-top: 10px; color: #D1D1D6; font-size: 13px; }
+  .shade::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,.3) 42%, rgba(0,0,0,0) 68%), linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 22%); }
+
+  /* ---------- hero video: titolo in alto a sinistra, testo + prodotto a destra, fiere in basso ---------- */
+  .hero-grid { position: absolute; z-index: 1; inset: 0; display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: auto 1fr auto; column-gap: 48px; padding: 120px var(--gutter) 32px; }
+  .hero-grid .title h1 { font-size: clamp(56px, 7.6vw, 132px); font-weight: 600; letter-spacing: -0.06em; line-height: .88; margin-top: 16px; }
+  .hero-grid .side { grid-column: 2; grid-row: 1 / 3; justify-self: end; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; width: min(420px, 100%); padding-top: 34px; }
+  .hero-grid .side .feature-box { width: 100%; }
+  .hero-grid .side p { color: #E5E5EA; font-size: 17px; line-height: 1.45; }
+  /* prodotto in evidenza: vetro neutro, elemento flottante */
+  .feature-box { display: grid; grid-template-columns: 112px 1fr; gap: 16px; padding: 12px; border-radius: var(--radius); background: rgba(14,14,16,.7); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); }
+  .feature-box img { width: 112px; height: 132px; object-fit: cover; border-radius: 4px; }
+  .feature-box .fb-body { display: flex; flex-direction: column; min-width: 0; }
+  .feature-box .fb-kicker { font-family: var(--pixel); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .feature-box strong { font-size: 20px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; margin-top: 6px; }
+  .feature-box .fb-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+  .feature-box .price { font-size: 18px; font-weight: 600; }
+  .feature-box .blk { --blk: 40px; padding: 0 16px; font-size: 13px; }
+  .hero-cta { grid-column: 1 / -1; grid-row: 3; display: flex; justify-content: center; margin-top: 28px; }
+  .hero.shade::after { background: linear-gradient(180deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.2) 40%, rgba(0,0,0,.25) 70%, rgba(0,0,0,.7) 100%); }
+
+  /* ---------- vetrina a card impilate ---------- */
+  .showcase { position: relative; padding: 0 0 80px; overflow: clip; }
+  .showcase .bg { position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; overflow: hidden; }
+  /* fondo: foto del prodotto della card attiva, in dissolvenza */
+  .showcase .bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(6px) brightness(.45) saturate(.9); transform: scale(1.12); opacity: 0; transition: opacity .8s ease; }
+  .showcase .bg img.on { opacity: 1; }
+  .showcase .intro { position: relative; text-align: center; padding-top: 120px; margin-bottom: 56px; }
+  .showcase .intro h2 { font-size: clamp(36px, 4.4vw, 64px); margin-top: 14px; }
+  .anchor { height: 0; scroll-margin-top: 110px; }
+  .pcard { position: sticky; top: 108px; margin: 0 auto 64px; max-width: 1280px; padding: 0 var(--gutter); }
+  .pcard:last-of-type { margin-bottom: 0; }
+  .pin { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; height: min(620px, calc(100vh - 140px)); padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; transform-origin: 50% 0; will-change: transform, filter; }
+  .pin .media { border-radius: 4px; overflow: hidden; background: #8E8E93; }
+  .pin .media img { width: 100%; height: 100%; object-fit: cover; }
+  /* scheda a "strip di volo": codice grande, campi in griglia come le strisce dei controllori */
+  .pin .info { display: flex; flex-direction: column; min-height: 0; padding: 8px 8px 4px; }
+  .pin .code { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .pin .code b { font-size: clamp(56px, 6vw, 96px); font-weight: 500; letter-spacing: -0.06em; line-height: .82; }
+  .pin .code .px { text-align: right; max-width: 18ch; }
+  .pin h3 { font-size: clamp(24px, 2.2vw, 34px); letter-spacing: -0.045em; line-height: 1.02; margin-top: 20px; }
+  .strip { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; border: 1px solid var(--line); border-radius: 4px; }
+  .strip > div { padding: 10px 12px; }
+  .strip > div:nth-child(even) { border-left: 1px solid var(--line); }
+  .strip > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .strip dt { font-size: 11px; }
+  .strip dd { display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 16px; font-weight: 500; }
+  .pin .info p { color: var(--soft); font-size: 15px; line-height: 1.5; margin-top: 18px; max-width: 46ch; }
+  .buyrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pin .price { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+  .pin .actions { display: flex; gap: 8px; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+
+  /* ---------- manifesto ---------- */
+  .manifesto { position: relative; padding: clamp(110px, 16vw, 220px) 0; overflow: hidden; background: var(--bg); }
+  /* fondo da carta aeronautica (reticolo con coordinate, rosa VOR, aerovia, pista) */
+  .chart { position: absolute; inset: 0; background: url(assets/chart.svg) center / cover no-repeat; pointer-events: none; }
+  .manifesto .text { position: relative; max-width: 920px; margin: 0 auto; font-size: clamp(34px, 4.6vw, 70px); font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
+  .manifesto .w { color: #3A3A3C; transition: color .25s; }
+  .manifesto .w.on { color: var(--fg); }
+  .man-media { position: relative; max-width: 920px; margin: 56px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .man-media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); }
+  .manifesto .foot { position: relative; max-width: 920px; margin: 48px auto 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+  /* ---------- metodo + servizi ---------- */
+  .method { padding: 0 0 clamp(80px, 10vw, 140px); }
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .method .media { position: relative; border-radius: 8px; overflow: hidden; min-height: 560px; }
+  .method .media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .method .media .px { position: absolute; left: 16px; bottom: 16px; background: var(--black); padding: 8px 10px; border-radius: 4px; }
+  .method .copy { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: clamp(20px, 3vw, 40px); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
+  .method .copy .top { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .method h2 { font-size: clamp(36px, 4vw, 60px); }
+  .method .copy p { color: var(--soft); max-width: 46ch; margin-top: 20px; }
+  .method .copy .blk { align-self: flex-start; }
+  /* servizi (come v1): un pannello diviso in tre, il dato grande è il protagonista */
+  .services { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  .service { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; align-content: start; padding: 28px clamp(20px, 2.6vw, 36px); } /* subgrid: righe allineate anche se una colonna va a capo */
+  .service + .service { border-left: 1px solid var(--line); }
+  .service .big { display: flex; align-items: center; min-height: 60px; font-size: clamp(40px, 3.8vw, 60px); font-weight: 500; letter-spacing: -0.06em; line-height: 1; }
+  .service .px { display: block; margin-top: 22px; color: var(--fg); }
+  .service p { color: var(--soft); font-size: 16px; margin-top: 6px; }
+  .pay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 60px; }
+  .pay span { height: 32px; padding: 0 14px; border: 1px solid rgba(255,255,255,.22); border-radius: var(--control-radius); font-family: var(--pixel); font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; display: grid; place-items: center; white-space: nowrap; }
+
+  /* ---------- faq ---------- */
+  .faq { padding: 0 0 clamp(80px, 10vw, 140px); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
+  .faq h2 { font-size: clamp(36px, 4vw, 60px); margin-top: 14px; }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 21px; font-weight: 500; letter-spacing: -0.02em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .px { color: var(--muted); font-size: 20px; line-height: 1; transition: transform .25s; }
+  .faq details[open] summary .px { transform: rotate(45deg); }
+  .faq details p { color: var(--soft); padding: 0 0 22px; max-width: 62ch; }
+
+  /* ---------- chiusura + newsletter ---------- */
+  .closing { position: relative; height: 100vh; min-height: 640px; overflow: hidden; }
+  .closing > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- footer ---------- */
+  footer { padding: 64px 0 calc(24px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr) auto; gap: 32px; }
+  .foot-grid .word { height: 18px; width: auto; }
+  .foot-grid p { color: var(--soft); font-size: 15px; margin-top: 18px; max-width: 40ch; }
+  .foot-grid h4 { margin-bottom: 14px; color: var(--muted); font-weight: 400; }
+  .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--soft); }
+  .foot-grid a:hover { color: var(--fg); }
+  .to-top { width: var(--blk); padding: 0; }
+  .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; z-index: 90; background: var(--white); color: var(--black); padding: 12px 16px; border-radius: 4px; width: max-content; max-width: calc(100vw - 32px); transition: opacity .25s, transform .25s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .thumbs { display: none; }
+    .pin { grid-template-columns: 1fr 1fr; height: auto; }
+    .pin .media { aspect-ratio: 4 / 5; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    :root { --blk: 46px; }
+    .hdr { padding: 12px var(--gutter); }
+    .brand .word { height: 26px; }
+    .cluster .blk { min-width: 0; padding: 0 14px; }
+    .cluster .lbl { display: none; }
+    .brand { gap: 12px; }
+    .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
+          .pcard { position: relative; top: 0; margin-bottom: 16px; }
+    .pin { grid-template-columns: 1fr; }
+    .buyrow { flex-wrap: wrap; margin-top: 18px; }
+    .pin .actions { width: 100%; }
+    .pin .actions .blk { flex: 1; }
+    .overlay .wrap { flex-direction: column; align-items: stretch; gap: 20px; }
+    .overlay .copy > .blk, .overlay .aside .blk { width: 100%; }
+    .overlay .scroll-hint { display: none; }
+    .overlay form { flex-direction: column; }
+    .overlay input { flex: none; }
+    .hero { height: auto; min-height: calc(100svh - var(--ann, 37px)); }
+    .hero-grid { position: relative; inset: auto; grid-template-columns: 1fr; grid-template-rows: none; row-gap: 28px; padding-top: 110px; }
+    .hero-grid .side { grid-column: 1; grid-row: auto; justify-self: stretch; width: 100%; padding-top: 0; }
+    .hero-cta { grid-row: auto; margin-top: 0; }
+    .hero-cta .blk { width: 100%; }
+    .method-grid, .faq-grid { grid-template-columns: 1fr; }
+    .method .media { min-height: 340px; }
+    .services { grid-template-columns: 1fr; }
+    .service + .service { border-left: 0; border-top: 1px solid var(--line); }
+        .foot-grid > :last-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .px { font-size: 12px; }
+    .blk { font-size: 13px; }
+    .announce a { display: none; }
+      .manifesto .foot { flex-direction: column; align-items: flex-start; }
+    .foot-grid > div:first-child { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .manifesto .w { color: var(--fg); } }
+  /* ---------- pagina shop: titolo grande + griglia di card (struttura di nivisgear.com/collections/all-products) ---------- */
+  .shop-stage { position: relative; overflow: clip; }
+  .shop-stage .bg { position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; overflow: hidden; }
+  .shop-stage .bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(56px) brightness(.55) saturate(1.2); transform: scale(1.3); }
+  .shop-stage .bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,12,.6) 0%, rgba(11,11,12,0) 35%); }
+  /* in fondo il fondo sfuma nel colore della pagina, senza stacco */
+  .shop-stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 240px; background: linear-gradient(180deg, rgba(11,11,12,0), var(--bg)); pointer-events: none; }
+  .shop-head { position: relative; z-index: 1; padding: 170px 0 56px; }
+  .shop-head .wrap { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; }
+  .shop-head h1 { font-size: clamp(48px, 6.4vw, 108px); font-weight: 600; letter-spacing: -0.06em; line-height: .9; margin-top: 16px; }
+  .shop-head p { color: var(--soft); max-width: 38ch; }
+  .shop-list { position: relative; z-index: 1; padding: 0 0 clamp(80px, 10vw, 140px); }
+  .shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .scard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+  .scard .media { display: block; aspect-ratio: 1 / 1; border-radius: 4px; overflow: hidden; background: var(--panel-2); }
+  .scard .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .scard:hover .media img { transform: scale(1.04); }
+  .scard .body { display: flex; flex-direction: column; flex: 1; padding: 16px 4px 4px; }
+  .scard h2 { font-size: clamp(22px, 1.7vw, 28px); letter-spacing: -0.04em; line-height: 1.05; margin-top: 8px; }
+  .scard p { color: var(--soft); font-size: 15px; line-height: 1.45; margin-top: 10px; }
+  .scard .bottom { margin-top: auto; padding-top: 18px; }
+  .scard .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .scard .price { font-size: 22px; font-weight: 500; letter-spacing: -0.03em; }
+  .scard .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .scard .actions .blk { --blk: 46px; padding: 0 10px; font-size: 13px; }
+  .faq-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; padding: 18px clamp(20px, 2.6vw, 36px); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  .faq-bar strong { font-size: 22px; font-weight: 500; letter-spacing: -0.03em; }
+  @media (max-width: 1200px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) {
+    .shop-head { padding: 130px 0 40px; }
+    .shop-head .wrap { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .faq-bar { flex-direction: column; align-items: flex-start; }
+    .faq-bar .blk { width: 100%; }
+  }
+  @media (max-width: 640px) { .shop-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="announce px">Spedizione gratuita sopra 150 €<a href="home-2.html">Torna alla home</a></div>
+
+<header class="hdr" id="hdr">
+  <a href="home-2.html" class="brand" aria-label="Blackshape Store, home">
+    <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+    <span class="store px">Store</span>
+  </a>
+  <div class="cluster">
+    <button class="blk blk-dark" id="cartBtn" aria-label="Carrello"><svg width="21" height="18" viewBox="0 0 75 66" fill="currentColor" aria-hidden="true"><path d="m38 29.1c-0.7 0-1.4-0.4-1.8-1.1l-6.4-12.8c-1.8-3.5-0.8-7.8 2.4-10.1 1.4-1.1 3.1-1.6 4.8-1.6 2.7 0 5.2 1.3 6.7 3.6l12.8 18.8c0.6 1 0.3 2.2-0.6 2.8-0.9 0.7-2.1 0.4-2.8-0.5l-12.7-18.9c-0.8-1.1-2.1-1.8-3.4-1.8-0.9 0-1.7 0.3-2.4 0.8-1.6 1.2-2.1 3.3-1.2 5.1l6.4 12.8c0.5 1 0.1 2.2-0.9 2.7q-0.4 0.2-0.9 0.2z"/><path d="m37 62.5c-1.7 0-3.4-0.6-4.8-1.6-3.2-2.3-4.2-6.6-2.4-10.1l5-9.9h-14.6c-2.9 0-5.5-1.2-7.3-3.4l-8.9-10.9c-1.2-1.5-1.8-3.5-1.6-5.4 0.2-2 1.2-3.8 2.7-5 1.4-1 3-1.6 4.6-1.6 1.8 0 3.6 0.6 4.9 1.8l9.8 8.7h39.1c4.1 0 7.6 2.9 8.1 6.9 0.3 2.2-0.4 4.5-1.9 6.2-1.5 1.8-3.7 2.7-6 2.7h-7.8l-12.2 18.1c-1.5 2.2-4 3.5-6.7 3.5zm-27.3-43.9c-0.7 0-1.5 0.2-2.1 0.7-0.7 0.6-1.1 1.4-1.2 2.3-0.1 0.9 0.2 1.8 0.7 2.5l8.9 10.8c1 1.3 2.6 2 4.2 2h17.8c0.7 0 1.4 0.4 1.7 1 0.4 0.6 0.4 1.3 0.1 1.9l-6.4 12.8c-0.9 1.8-0.4 3.9 1.2 5.1 0.7 0.5 1.5 0.8 2.4 0.8 1.3 0 2.6-0.7 3.4-1.8l12.7-18.9c0.4-0.5 1-0.9 1.7-0.9h8.9c1.1 0 2.2-0.5 2.9-1.3 0.8-0.9 1.1-2 1-3.1-0.3-2-2-3.4-4.1-3.4h-39.9c-0.5 0-0.9-0.2-1.3-0.5l-10.3-9.2c-0.7-0.5-1.4-0.8-2.3-0.8z"/></svg><span class="lbl">Carrello ·</span> <span id="cartCount">0</span></button>
+    <button class="blk blk-light" id="shopBtn">Shop <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"/></svg></button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="shopDrawer" aria-label="Esplora la linea" aria-hidden="true">
+  <header><span class="px">Esplora la linea</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body shop-list" id="shopList"></div>
+  <footer><a href="#prodotti" class="blk blk-light" data-close>Vedi tutti i prodotti <span>→</span></a></footer>
+</aside>
+
+<aside class="drawer" id="cartDrawer" aria-label="Carrello" aria-hidden="true">
+  <header><span class="px"><b id="cartItemsCount">0</b> articoli nel carrello</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body" id="cartList"></div>
+  <footer>
+    <div class="total"><span class="px px-muted">Totale</span><strong id="cartTotal">0 €</strong></div>
+    <span class="px px-muted">Spedizione calcolata al checkout</span>
+    <a href="#" class="blk blk-light">Vai al checkout <span>→</span></a>
+  </footer>
+</aside>
+
+<main>
+  <!-- TITOLO -->
+  <div class="shop-stage">
+  <!-- fondo d'ambiente: una foto molto sfocata, non deve essere riconoscibile -->
+  <div class="bg" aria-hidden="true"><img src="assets/formation.webp" alt=""></div>
+  <section class="shop-head">
+    <div class="wrap">
+      <div>
+        <span class="px px-muted">Shop · 8 prodotti</span>
+        <h1>Tutti i prodotti.</h1>
+      </div>
+      <p>Felpe, t-shirt, cappellini e accessori per il volo con il marchio Blackshape.</p>
+    </div>
+  </section>
+
+  <!-- GRIGLIA -->
+  <section class="shop-list" id="prodotti">
+    <div class="wrap">
+      <div class="shop-grid" id="grid"></div>
+    </div>
+  </section>
+  </div>
+
+  <!-- MARCHIO + SERVIZI + FAQ -->
+  <section class="method">
+    <div class="wrap">
+      <div class="method-grid">
+        <div class="media">
+          <img src="assets/v-pilot.webp" alt="Pilota Blackshape in volo" loading="lazy">
+          <span class="px">Blackshape Aircraft</span>
+        </div>
+        <div class="copy">
+          <div class="top px px-muted"><span>Il marchio</span><span>Blackshape Aircraft</span></div>
+          <div>
+            <h2>Lo stesso marchio dei nostri aerei.</h2>
+            <p>Blackshape costruisce aerei biposto in fibra di carbonio. Sugli oggetti dello Store trovi lo stesso logo che portano i nostri aerei.</p>
+          </div>
+          <a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener" class="blk blk-dark">Scopri Blackshape <span>↗</span></a>
+        </div>
+      </div>
+      <div class="services">
+        <div class="service"><span class="big">2-4 giorni</span><span class="px">Consegna in UE</span><p>Gratuita per gli ordini sopra 150 €.</p></div>
+        <div class="service"><span class="big">30 giorni</span><span class="px">Per il reso</span><p>Il cambio taglia è gratuito.</p></div>
+        <div class="service"><div class="pay"><span>Carte</span><span>PayPal</span><span>Apple Pay</span><span>Bonifico</span></div><span class="px">Pagamenti sicuri</span><p>Transazioni protette, nessun dato di carta salvato.</p></div>
+      </div>
+      <div class="faq-bar">
+        <span class="px px-muted">Assistenza</span>
+        <strong>Taglie, spedizioni e resi: le domande frequenti.</strong>
+        <a href="home-2.html#faq" class="blk blk-dark">Leggi le risposte <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHIUSURA + NEWSLETTER -->
+  <section class="closing shade">
+    <img src="assets/gabriel-apron.webp" alt="Aerei Blackshape sul piazzale" style="object-position:70% 50%">
+    <div class="overlay">
+      <div class="wrap">
+        <div class="copy">
+          <span class="px">Pre-flight briefing · Una mail al mese</span>
+          <h2>Il cielo è di chi lo insegue.</h2>
+          <form id="nl">
+            <input type="email" required placeholder="La tua email" aria-label="Email">
+            <button class="blk blk-light" type="submit">Iscriviti</button>
+          </form>
+          <small>Iscrivendoti accetti di ricevere la newsletter di Blackshape Store.</small>
+        </div>
+        <div class="aside"><a href="#prodotti" class="blk blk-dark">Torna ai prodotti <span>↑</span></a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+        <p>Lo shop ufficiale Blackshape: abbigliamento e accessori per chi vola.</p>
+      </div>
+      <div><h4 class="px">I prodotti</h4><ul id="footProducts"></ul></div>
+      <div><h4 class="px">Assistenza</h4><ul><li><a href="#">Guida alle taglie</a></li><li><a href="#">Spedizioni e resi</a></li><li><a href="home-2.html#faq">Domande frequenti</a></li><li><a href="#">Contatti</a></li></ul></div>
+      <div><h4 class="px">Blackshape</h4><ul><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Sito ufficiale</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Aerei</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Scuola di volo</a></li></ul></div>
+      <div><a href="#" class="blk blk-dark to-top" aria-label="Torna su"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a></div>
+    </div>
+    <div class="legal px">
+      <span>© 2026 Blackshape S.p.A. · Strada Statale 16 km 841, Monopoli (BA) · Made in Never Before Italia</span>
+      <span><a href="#">Privacy</a> · <a href="#">Cookie</a> · <a href="#">Condizioni di vendita</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast px" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // catalogo provvisorio (stessi prodotti di home-2): foto e prezzi da confermare
+  const products = [
+    { id: 'cappellino', code: 'CAP', cat: 'Abbigliamento', sizes: 'Taglia unica',  name: 'Cappellino Blackshape',       tag: 'Il logo Blackshape, sulla visiera.',    desc: 'Cappellino con visiera curva e logo Blackshape sul davanti. Chiusura regolabile sul retro.',            price: 35,  stock: 'Disponibile', img: 'f-cappellino',       colors: ['#1D1D1F', '#FFF'] },
+    { id: 'bottiglia',  code: 'BTL', cat: 'Accessori',     sizes: '500 ml',        name: 'Bottiglia in acciaio 500 ml', tag: 'Acciaio inossidabile riciclato.',       desc: 'Bottiglia da 500 ml in acciaio inossidabile riciclato, con tappo a vite e logo Blackshape.',            price: 29,  stock: 'Disponibile', img: 'f-bottiglia', colors: ['#1D1D1F', '#8E8E93'] },
+    { id: 'felpa',      code: 'FLP', cat: 'Abbigliamento', sizes: 'XS-XXL',        name: 'Felpa girocollo unisex',      tag: 'Cotone e poliestere rigenerati.',       desc: 'Felpa girocollo unisex in cotone e poliestere rigenerati da 280 g/m², con logo Blackshape sul petto.', price: 69,  stock: 'Disponibile', img: 'f-felpa',     colors: ['#1D1D1F', '#8E8E93', '#FFF'] },
+    { id: 'agenda',     code: 'AGD', cat: 'Cartoleria',    sizes: 'Formato unico', name: 'Agenda Blackshape',           tag: 'Voli, appunti e scadenze.',             desc: 'Agenda con copertina nera e logo Blackshape, per segnare voli, appunti e scadenze.',                     price: 25,  stock: 'Disponibile', img: 'f-agenda',    colors: ['#1D1D1F'] },
+    { id: 'tshirt',     code: 'TEE', cat: 'Abbigliamento', sizes: 'XS-XXL',        name: 'T-shirt Blackshape',          tag: 'Cotone, logo Blackshape.',              desc: 'T-shirt girocollo in cotone con il logo Blackshape.',                                                     price: 35,  stock: 'Disponibile', img: 'f-tshirt',       colors: ['#1D1D1F', '#FFF'] },
+    { id: 'zaino',      code: 'ZNO', cat: 'Borse',         sizes: 'Taglia unica',  name: 'Zaino aeronautico',           tag: 'Cuffie, documenti e tablet in spalla.', desc: 'Zaino nero con logo Blackshape, con spazio per cuffie, documenti di volo e tablet.',                     price: 119, stock: 'Disponibile', img: 'f-zaino',     colors: ['#1D1D1F'] },
+    { id: 'borsa',      code: 'BRS', cat: 'Borse',         sizes: 'Taglia unica',  name: 'Borsa pilota',                tag: 'La borsa di chi vola.',                 desc: 'Borsa pilota nera con logo Blackshape, per cuffie, carte e documenti di volo.',                          price: 99,  stock: 'Disponibile', img: 'f-borsa',     colors: ['#1D1D1F'] },
+    { id: 'kneeboard',  code: 'KNB', cat: 'Accessori',     sizes: 'Taglia unica',  name: 'Kneeboard',                   tag: 'Carte e appunti sulla gamba.',          desc: 'Tavoletta da coscia con cinghia regolabile, per carte, checklist e appunti in volo. Logo Blackshape.', price: 39,  stock: 'Disponibile', img: 'f-kneeboard', colors: ['#1D1D1F'] },
+  ];
+  const $ = s => document.querySelector(s);
+  const img = p => `assets/shop/${p.img}.webp`;
+  const url = p => `prodotto.html?id=${p.id}`;
+
+  $('#grid').innerHTML = products.map(p => `
+    <article class="scard">
+      <a class="media" href="${url(p)}"><img src="${img(p)}" alt="${p.name}" loading="lazy"></a>
+      <div class="body">
+        <span class="px px-muted">${p.cat} · ${p.sizes}</span>
+        <h2><a href="${url(p)}">${p.name}</a></h2>
+        <p>${p.desc}</p>
+        <div class="bottom">
+          <div class="row"><span class="price">${p.price} €</span><span class="px px-muted">${p.stock}</span></div>
+          <div class="actions"><button class="blk blk-light" data-add="${p.id}">Aggiungi <span>+</span></button><a href="${url(p)}" class="blk blk-dark">Dettagli <span>↗</span></a></div>
+        </div>
+      </div>
+    </article>`).join('');
+  $('#shopList').innerHTML = products.map(p => `<a href="${url(p)}" class="line-item"><img src="${img(p)}" alt=""><div><strong>${p.name}</strong><span class="px px-muted">${p.stock}</span></div><span class="px">${p.price} €</span></a>`).join('');
+  $('#footProducts').innerHTML = products.map(p => `<li><a href="${url(p)}">${p.name}</a></li>`).join('');
+
+  // header: segue la barra annunci finché è visibile, poi resta in alto
+  const hdr = $('#hdr');
+  const announce = $('.announce');
+  const setAnn = () => document.documentElement.style.setProperty('--ann', announce.offsetHeight + 'px');
+  setAnn(); addEventListener('resize', setAnn);
+  const onScroll = () => {
+    hdr.style.top = Math.max(announce.getBoundingClientRect().bottom, 0) + 'px';
+    hdr.classList.toggle('solid', scrollY > 80);
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // pannelli
+  const scrim = $('#scrim');
+  const drawers = { shop: $('#shopDrawer'), cart: $('#cartDrawer') };
+  const openDrawer = name => {
+    Object.entries(drawers).forEach(([k, d]) => { d.classList.toggle('open', k === name); d.setAttribute('aria-hidden', k !== name); });
+    scrim.classList.toggle('on', !!name);
+  };
+  $('#shopBtn').onclick = () => openDrawer('shop');
+  $('#cartBtn').onclick = () => openDrawer('cart');
+  scrim.onclick = () => openDrawer(null);
+  document.addEventListener('click', e => { if (e.target.closest('[data-close]')) openDrawer(null); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') openDrawer(null); });
+
+  // carrello
+  const cart = [];
+  function renderCart() {
+    $('#cartCount').textContent = cart.length;
+    $('#cartItemsCount').textContent = cart.length;
+    $('#cartTotal').textContent = cart.reduce((s, p) => s + p.price, 0) + ' €';
+    $('#cartList').innerHTML = cart.length ? cart.map(p => `<div class="line-item"><img src="${img(p)}" alt=""><div><strong>${p.name}</strong><span class="px px-muted">${p.cat}</span></div><span class="px">${p.price} €</span></div>`).join('')
+      : '<p class="empty">Il carrello è vuoto.</p>';
+  }
+  renderCart();
+  const toast = $('#toast');
+  const show = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(show.t); show.t = setTimeout(() => toast.classList.remove('show'), 2200); };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-add]'); if (!b) return;
+    const p = products.find(x => x.id === b.dataset.add); cart.push(p); renderCart(); show(p.name + ' aggiunto');
+  });
+  $('#nl').onsubmit = e => { e.preventDefault(); e.target.reset(); show('Iscrizione confermata'); };
+</script>
+</body>
+</html>

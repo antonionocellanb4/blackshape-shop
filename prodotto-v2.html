@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blackshape Store</title>
+<meta name="description" content="Abbigliamento tecnico per chi vola. Lo shop ufficiale Blackshape.">
+<link rel="icon" href="assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Google+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* stessi token e componenti di home-2-v2.html; struttura della pagina prodotto presa da nivisgear.com */
+  :root {
+    --bg: #0B0B0C;
+    --panel: #121214;
+    --panel-2: #1D1D1F;
+    --fg: #F5F5F7;
+    --soft: #C7C7CC;
+    --muted: #A1A1A6;
+    --line: rgba(255,255,255,.12);
+    --white: #FFF;
+    --black: #000;
+    --prime-blue: #1F4FD1;
+    --silver: #A7AAAF;
+    --tobacco: #A0582F;
+    --radius: 6px;
+    --gutter: clamp(16px, 3vw, 40px);
+    --blk: 52px;
+    --sans: Geist, Inter, system-ui, sans-serif;
+    --pixel: "Google Sans", Geist, sans-serif;
+    --pbg: #C7C9CA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button, select { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .wrap { max-width: 1520px; margin: 0 auto; padding: 0 var(--gutter); }
+  h1, h2, h3 { font-weight: 500; letter-spacing: -0.05em; line-height: .95; }
+  .px { font-family: var(--pixel); font-size: 13px; font-weight: 500; line-height: 1.35; text-transform: uppercase; letter-spacing: .06em; }
+  .px-muted { color: #B5B5BA; }
+  .blk { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; height: var(--blk); padding: 0 18px; border-radius: 4px; font-family: var(--pixel); font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; transition: background .2s, color .2s; }
+  .blk-light { background: var(--white); color: var(--black); }
+  .blk-light:hover { background: #E3E3E8; }
+  .blk-dark { background: var(--panel-2); color: var(--fg); }
+  .blk-dark:hover { background: #2C2C2E; }
+  /* fondo da carta aeronautica (reticolo con coordinate, rosa VOR, aerovia, pista) */
+  .chart { position: absolute; inset: 0; background: url(assets/chart.svg) center / cover no-repeat; pointer-events: none; }
+
+  /* ---------- barra annunci + header (come home-2) ---------- */
+  .announce { position: relative; z-index: 60; background: var(--black); text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); color: var(--soft); }
+  .announce a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; }
+  .hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; }
+  .hdr > * { pointer-events: auto; }
+  .hdr::before { content: ""; position: absolute; inset: 0 0 -28px 0; z-index: -1; background: linear-gradient(180deg, rgba(11,11,12,.94) 55%, rgba(11,11,12,0)); opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .hdr.solid::before { opacity: 1; }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .brand .tile { width: 52px; height: 52px; border-radius: var(--radius); background: var(--black); display: grid; place-items: center; }
+  .brand .tile img { width: 34px; height: auto; }
+  .brand .word { height: 26px; width: auto; transition: filter .3s; }
+  /* sopra i fondi chiari del prodotto il logo testuale diventa nero */
+  .hdr.light .brand .word { filter: invert(1); }
+  .cluster { display: flex; gap: 8px; }
+  .cluster .blk { min-width: 124px; }
+
+  /* ---------- pannelli laterali ---------- */
+  .scrim { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.35); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  .scrim.on { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; z-index: 80; top: 12px; right: 12px; bottom: 12px; width: min(520px, calc(100vw - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .drawer.open { transform: none; }
+  .drawer header { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+  .drawer .close { font-family: var(--pixel); font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .drawer .close:hover { color: var(--fg); }
+  .drawer .body { flex: 1; overflow-y: auto; padding: 8px 22px; }
+  .drawer footer { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+  .drawer footer .blk { width: 100%; }
+  .line-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .line-item img { width: 72px; height: 84px; object-fit: cover; border-radius: 4px; }
+  .line-item strong { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  .line-item .px { margin-top: 6px; }
+  .shop-list a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+  .empty { padding: 40px 0; color: var(--soft); }
+  .total { display: flex; justify-content: space-between; align-items: baseline; }
+  .total strong { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+  .size-table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 16px; }
+  .size-table th, .size-table td { text-align: left; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .size-table th { font-family: var(--pixel); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .drawer .note { color: var(--soft); font-size: 15px; }
+
+  /* ---------- barra d'acquisto fissa ---------- */
+  .buy { position: fixed; z-index: 45; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(1320px, calc(100% - 2 * var(--gutter))); display: grid; grid-template-columns: 1.3fr auto auto auto; align-items: stretch; border-radius: 8px; background: rgba(30,30,33,.82); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); }
+  .buy > div { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-left: 1px solid var(--line); }
+  .buy > div:first-child { border-left: 0; justify-content: space-between; }
+  .buy .name { font-size: 24px; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
+  .buy .name span { display: block; color: var(--muted); }
+  .swatches { display: flex; gap: 6px; }
+  .swatches button { width: 20px; height: 20px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+  .swatches button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--white); }
+  .color-name { font-size: 15px; font-weight: 500; min-width: 90px; }
+  .size-select { position: relative; }
+  .size-select select { appearance: none; -webkit-appearance: none; height: var(--blk); min-width: 150px; padding: 0 40px 0 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,.35); background: transparent; color: var(--fg); font-family: var(--pixel); font-size: 14px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+  .size-select select option { color: #000; }
+  .size-select::after { content: ""; position: absolute; right: 16px; top: 50%; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .size-select.error select { border-color: #FF5A4F; }
+  .guide-link { font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .buy .price { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; white-space: nowrap; }
+
+  /* ---------- hero prodotto ---------- */
+  .p-hero { position: relative; height: calc(100vh - var(--ann, 37px)); height: calc(100svh - var(--ann, 37px)); min-height: 600px; overflow: hidden; background: var(--black); }
+  .p-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .p-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 45%, rgba(0,0,0,0) 65%), linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 65%, rgba(0,0,0,.5) 100%); }
+  .p-hero .label { position: absolute; z-index: 1; left: var(--gutter); top: calc(50% - 20px); max-width: 12ch; font-size: clamp(48px, 7vw, 110px); font-weight: 500; letter-spacing: -0.06em; line-height: .9; }
+
+  /* ---------- testo che si accende ---------- */
+  .statement { position: relative; padding: clamp(110px, 14vw, 200px) 0; overflow: hidden; }
+  .statement .text { position: relative; max-width: 960px; margin: 0 auto; font-size: clamp(34px, 4.6vw, 72px); font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
+  .w { color: #3A3A3C; transition: color .25s; }
+  .w.on { color: var(--fg); }
+
+  /* ---------- presentazione (galleria) ---------- */
+  .present { position: relative; height: 100vh; min-height: 640px; background: var(--pbg); overflow: hidden; }
+  .present .stage { position: absolute; inset: 0; display: grid; place-items: center; padding: 100px 0 120px; }
+  .present .stage img { height: 100%; width: auto; max-width: 100%; object-fit: contain; transition: opacity .35s; -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent 100%); mask-image: radial-gradient(closest-side, #000 78%, transparent 100%); }
+  .present.cover .stage img { -webkit-mask-image: none; mask-image: none; }
+  .present.cover .stage { padding: 0; }
+  .present.cover .stage img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-thumbs { position: absolute; z-index: 2; left: var(--gutter); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
+  .gallery-thumbs button { width: 92px; height: 92px; border-radius: 4px; overflow: hidden; background: rgba(255,255,255,.3); outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .2s; }
+  .gallery-thumbs button[aria-pressed="true"] { outline-color: var(--black); }
+  .present.dark .gallery-thumbs button[aria-pressed="true"] { outline-color: var(--white); }
+  .gallery-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- scheda tecnica ---------- */
+  .specs { position: relative; padding: clamp(120px, 14vw, 200px) 0 clamp(120px, 12vw, 180px); overflow: hidden; }
+  .specs .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(.4) saturate(.8); transform: scale(1.1); }
+  .spec-card { position: relative; max-width: 760px; margin: 0 auto; background: rgba(22,22,24,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+  .spec-card .top { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .spec-card h2 { font-size: clamp(34px, 4vw, 58px); letter-spacing: -0.055em; padding: clamp(60px, 9vw, 120px) 0 28px; }
+  .spec-group { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
+  .spec-group ul { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--soft); font-size: 16px; }
+  .spec-group li::before { content: "·"; margin-right: 10px; color: var(--muted); }
+  .spec-group a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- sezioni funzione ---------- */
+  .feat-full { position: relative; height: 100vh; min-height: 640px; overflow: hidden; background: var(--black); }
+  .feat-full img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .feat-full::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,0) 70%), linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 30%); }
+  .feat-full .copy { position: absolute; z-index: 1; left: 0; right: 0; top: 120px; }
+  .feat-full h2 { font-size: clamp(40px, 5.4vw, 84px); letter-spacing: -0.06em; max-width: 13ch; margin-top: 16px; }
+  .feat-full p { position: absolute; z-index: 1; left: var(--gutter); bottom: 140px; max-width: 42ch; color: #E8E8ED; font-size: 18px; }
+  .feat-split { padding: clamp(100px, 12vw, 160px) 0; }
+  .feat-split h2 { font-size: clamp(40px, 5.4vw, 84px); letter-spacing: -0.06em; max-width: 16ch; margin-top: 16px; }
+  .feat-split .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 56px 0 0 clamp(0px, 16vw, 240px); }
+  .feat-split .pair img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 4px; }
+  .feat-split p { max-width: 52ch; color: var(--soft); font-size: 18px; margin: 40px 0 0 clamp(0px, 16vw, 240px); }
+  .feat-label { color: var(--fg); }
+
+  /* ---------- dettagli ---------- */
+  .details { position: relative; padding: clamp(100px, 12vw, 160px) 0; overflow: hidden; }
+  .details h2 { position: relative; font-size: clamp(40px, 5vw, 76px); letter-spacing: -0.06em; max-width: 18ch; margin-bottom: 56px; }
+  .det-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .det { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+  .det .media { aspect-ratio: 1 / 1; border-radius: 4px; overflow: hidden; background: var(--panel-2); }
+  .det .media img { width: 100%; height: 100%; object-fit: cover; }
+  .det button { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; text-align: left; padding: 22px 4px 6px; width: 100%; }
+  .det h3 { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.045em; line-height: 1.02; }
+  .det .plus { font-size: 26px; line-height: 1; color: var(--muted); transition: transform .25s; flex: none; }
+  .det.open .plus { transform: rotate(45deg); }
+  .det .tag { padding: 4px 4px 0; }
+  .det p { display: none; color: var(--soft); font-size: 16px; padding: 12px 4px 4px; }
+  .det.open p { display: block; }
+
+  /* ---------- metodo + servizi (come home-2) ---------- */
+  .method { padding: 0 0 clamp(80px, 10vw, 140px); }
+  .services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .service { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+  .service .px { display: block; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .service p { color: var(--soft); font-size: 16px; }
+
+  /* ---------- recensioni: stato vuoto dichiarato ---------- */
+  .reviews { position: relative; padding: clamp(100px, 12vw, 160px) 0; border-top: 1px solid var(--line); overflow: hidden; }
+  .reviews .inner { position: relative; text-align: center; max-width: 720px; margin: 0 auto; }
+  .reviews h2 { font-size: clamp(40px, 5vw, 76px); letter-spacing: -0.06em; margin-top: 16px; }
+  .reviews p { color: var(--soft); margin: 20px auto 32px; max-width: 48ch; }
+
+  /* ---------- perché siamo diversi (card come la vetrina) ---------- */
+  .why { position: relative; padding: clamp(100px, 12vw, 160px) 0; overflow: hidden; }
+  .why .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.55); }
+  .pin { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; min-height: min(600px, calc(100vh - 160px)); padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; max-width: 1280px; margin: 0 auto; }
+  .pin .media { border-radius: 4px; overflow: hidden; }
+  .pin .media img { width: 100%; height: 100%; object-fit: cover; }
+  .pin .info { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; padding: 8px; }
+  .pin .info h3 { font-size: clamp(32px, 3.2vw, 54px); letter-spacing: -0.055em; line-height: .95; margin-bottom: auto; }
+  .pin .info h4 { font-size: clamp(26px, 2.2vw, 36px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.05; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pin .info p { color: var(--soft); font-size: 16px; }
+
+  /* ---------- altri prodotti ---------- */
+  .more { padding: clamp(100px, 12vw, 160px) 0; }
+  .more .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 32px; }
+  .more h2 { font-size: clamp(36px, 4vw, 60px); margin-top: 12px; }
+  .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .mcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 14px; }
+  .mcard .media { aspect-ratio: 4 / 5; border-radius: 4px; overflow: hidden; }
+  .mcard .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .mcard:hover .media img { transform: scale(1.04); }
+  .mcard h3 { font-size: 22px; letter-spacing: -0.035em; line-height: 1.1; padding: 0 4px; }
+  .mcard .row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px 4px; border-top: 1px solid var(--line); margin-top: auto; }
+  .mcard .price { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+
+  /* ---------- chiusura + footer (come home-2) ---------- */
+  .closing { position: relative; height: 100vh; min-height: 640px; overflow: hidden; }
+  .closing > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .closing::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.45)); }
+  .hero-card { position: absolute; z-index: 1; left: 50%; bottom: 0; transform: translateX(-50%); width: min(860px, calc(100% - 2 * var(--gutter))); background: rgba(14,14,16,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line); border-bottom: 0; border-radius: 8px 8px 0 0; padding: 14px 16px 16px; }
+  .hero-card .top { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .hero-card .top span { white-space: nowrap; }
+  .hero-card .body { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-top: 56px; }
+  .hero-card h2 { font-size: clamp(44px, 5.6vw, 84px); letter-spacing: -0.06em; line-height: .9; }
+  .closing form { display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .closing input { flex: 1; min-width: 0; height: var(--blk); border-radius: 4px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 0 16px; font: inherit; font-size: 16px; }
+  .closing input::placeholder { color: var(--muted); }
+  .closing input:focus { outline: 2px solid var(--white); outline-offset: -1px; }
+  .closing small { display: block; margin-top: 10px; color: var(--muted); font-size: 13px; }
+  footer { padding: 64px 0 calc(130px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr) auto; gap: 32px; }
+  .foot-grid .word { height: 18px; width: auto; }
+  .foot-grid p { color: var(--soft); font-size: 15px; margin-top: 18px; max-width: 40ch; }
+  .foot-grid h4 { margin-bottom: 14px; color: var(--muted); font-weight: 500; }
+  .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--soft); }
+  .foot-grid a:hover { color: var(--fg); }
+  .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(120px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; z-index: 90; background: var(--white); color: var(--black); padding: 12px 16px; border-radius: 4px; width: max-content; max-width: calc(100vw - 32px); transition: opacity .25s, transform .25s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .buy { grid-template-columns: 1fr auto auto; }
+    .buy .colors-cell { display: none; }
+    .pin { grid-template-columns: 1fr 1.3fr; }
+    .pin .media { aspect-ratio: 4 / 5; }
+    .more-grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    :root { --blk: 46px; }
+    .hdr { padding: 12px var(--gutter); }
+    .brand .tile { width: 46px; height: 46px; }
+    .brand .word { display: none; }
+    .cluster .blk { min-width: 0; padding: 0 14px; }
+    .buy { left: 0; right: 0; bottom: 0; transform: none; width: 100%; border-radius: 8px 8px 0 0; border-bottom: 0; grid-template-columns: 1fr; padding-bottom: env(safe-area-inset-bottom); }
+    .buy > div { border-left: 0; padding: 8px 12px; }
+    .buy > div:first-child { padding-top: 12px; }
+    .buy .name { font-size: 18px; }
+    .buy .name span { display: inline; margin-left: 6px; }
+    .buy .guide-link { display: none; }
+    .buy .guide-cell .size-select { flex: 1; }
+    .buy .guide-cell .size-select select { width: 100%; min-width: 0; }
+    .buy .action-cell { gap: 8px; padding-bottom: 12px; }
+    .buy .action-cell .blk { flex: 1; }
+    .buy .price { font-size: 20px; }
+    .p-hero .label { top: auto; bottom: 250px; }
+    .gallery-thumbs { top: auto; bottom: 220px; transform: none; flex-direction: row; left: 50%; translate: -50% 0; }
+    .gallery-thumbs button { width: 56px; height: 56px; }
+    .present .stage { padding: 90px 0 300px; }
+    .spec-group { grid-template-columns: 1fr; gap: 10px; }
+    .feat-full p { bottom: 240px; right: var(--gutter); }
+    .feat-split .pair, .feat-split p { margin-left: 0; }
+    .det-grid { grid-template-columns: 1fr; }
+    .pin { grid-template-columns: 1fr; }
+    .services { grid-template-columns: 1fr; }
+    .closing form { flex-direction: column; }
+    .closing input { flex: none; }
+    .hero-card .top span:nth-child(2) { display: none; }
+    .hero-card .body { flex-direction: column; align-items: stretch; }
+    .foot-grid > :last-child { grid-column: 1 / -1; }
+    footer { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(230px + env(safe-area-inset-bottom)); }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .px { font-size: 12px; }
+    .blk { font-size: 13px; }
+    .announce a { display: none; }
+    .more-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mcard h3 { font-size: 17px; }
+    .mcard .row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .hero-card .top span:nth-child(3) { display: none; }
+    .spec-card .top span { white-space: nowrap; }
+    .spec-card .top span:nth-child(3) { display: none; }
+    .foot-grid > div:first-child { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .w { color: var(--fg); } }
+</style>
+</head>
+<body>
+
+<div class="announce px">Spedizione gratuita sopra 150 €<a href="home-2-v2.html#linea">Vedi la linea</a></div>
+
+<header class="hdr" id="hdr">
+  <a href="home-2-v2.html" class="brand" aria-label="Blackshape Store, home">
+    <span class="tile"><img src="assets/icon.svg" alt=""></span>
+    <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+  </a>
+  <div class="cluster">
+    <button class="blk blk-dark" id="cartBtn">Carrello · <span id="cartCount">0</span></button>
+    <button class="blk blk-light" id="shopBtn">Shop <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"/></svg></button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="shopDrawer" aria-label="Esplora la linea" aria-hidden="true">
+  <header><span class="px">Esplora la linea</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body shop-list" id="shopList"></div>
+  <footer><a href="home-2-v2.html#linea" class="blk blk-light">Vedi tutti i prodotti <span>→</span></a></footer>
+</aside>
+
+<aside class="drawer" id="cartDrawer" aria-label="Carrello" aria-hidden="true">
+  <header><span class="px"><b id="cartItemsCount">0</b> articoli nel carrello</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body" id="cartList"></div>
+  <footer>
+    <div class="total"><span class="px px-muted">Totale</span><strong id="cartTotal">0 €</strong></div>
+    <span class="px px-muted">Spedizione calcolata al checkout</span>
+    <a href="#" class="blk blk-light">Vai al checkout <span>→</span></a>
+  </footer>
+</aside>
+
+<aside class="drawer" id="sizeDrawer" aria-label="Guida alle taglie" aria-hidden="true">
+  <header><span class="px">Guida alle taglie</span><button class="close" data-close>Chiudi</button></header>
+  <div class="body">
+    <table class="size-table">
+      <thead><tr><th>Taglia</th><th>Torace</th><th>Vita</th><th>Manica</th></tr></thead>
+      <tbody>
+        <tr><td>XS</td><td>86-90</td><td>72-76</td><td>60</td></tr>
+        <tr><td>S</td><td>90-96</td><td>76-82</td><td>62</td></tr>
+        <tr><td>M</td><td>96-102</td><td>82-88</td><td>64</td></tr>
+        <tr><td>L</td><td>102-108</td><td>88-94</td><td>66</td></tr>
+        <tr><td>XL</td><td>108-116</td><td>94-102</td><td>67</td></tr>
+        <tr><td>XXL</td><td>116-124</td><td>102-110</td><td>68</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Misure in centimetri. La vestibilità è pensata per stare sopra una felpa in cabina: se sei tra due taglie, scegli la più piccola.</p>
+  </div>
+</aside>
+
+<!-- barra d'acquisto: resta fissa su tutta la pagina -->
+<div class="buy" id="buy">
+  <div><strong class="name" id="buyName"></strong><span class="px px-muted" id="buyStock"></span></div>
+  <div class="colors-cell"><span class="swatches" id="swatches"></span><span class="color-name" id="colorName"></span></div>
+  <div class="guide-cell"><label class="size-select" id="sizeWrap"><select id="size" aria-label="Taglia"></select></label><button class="guide-link" data-open="size">Guida taglie</button></div>
+  <div class="action-cell"><span class="price" id="buyPrice"></span><button class="blk blk-light" id="addBtn">Aggiungi al carrello</button></div>
+</div>
+
+<main>
+  <section class="p-hero" data-light="false">
+    <img id="heroImg" alt="">
+    <h1 class="label" id="heroTitle"></h1>
+  </section>
+
+  <section class="statement">
+    <div class="chart" aria-hidden="true"></div>
+    <p class="text wrap" id="statement"></p>
+  </section>
+
+  <section class="present" id="present" data-light="true">
+    <div class="gallery-thumbs" id="thumbs"></div>
+    <div class="stage"><img id="stageImg" alt=""></div>
+  </section>
+
+  <section class="specs" id="specs">
+    <img class="bgimg" src="assets/formation.webp" alt="">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="spec-card wrap">
+      <div class="top px"><span>Scheda tecnica</span><span class="px-muted">40°57′N 17°18′E · Monopoli</span></div>
+      <h2 id="specTitle"></h2>
+      <div id="specGroups"></div>
+    </div>
+  </section>
+
+  <div id="features"></div>
+
+  <section class="details">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="wrap">
+      <h2>I dettagli che non vedi finché non voli.</h2>
+      <div class="det-grid" id="details"></div>
+    </div>
+  </section>
+
+  <section class="method">
+    <div class="wrap services">
+      <div class="service"><span class="px">Spedizione gratuita</span><p>Su tutti gli ordini sopra 150 € in UE. Consegna in 2-4 giorni lavorativi.</p></div>
+      <div class="service"><span class="px">Resi gratuiti</span><p>30 giorni per cambiare taglia o restituire il capo, senza costi.</p></div>
+      <div class="service"><span class="px">Patch con la tua marca</span><p>Aggiungi al bomber una patch ricamata con la marca del tuo aereo, per esempio I-XOIO.</p></div>
+    </div>
+  </section>
+
+  <section class="reviews">
+    <div class="chart" aria-hidden="true"></div>
+    <div class="inner wrap">
+      <span class="px px-muted">Recensioni</span>
+      <h2>Ancora nessuna recensione.</h2>
+      <p>Le recensioni verificate di chi ha volato con questo capo compariranno qui. Hai già il tuo? Raccontaci com'è andato in cabina.</p>
+      <a href="#" class="blk blk-dark">Scrivi la prima recensione <span>✎</span></a>
+    </div>
+  </section>
+
+  <section class="why">
+    <img class="bgimg" src="assets/v-apron.webp" alt="">
+    <div class="wrap">
+      <div class="pin">
+        <div class="media"><img src="assets/v-pilot.webp" alt="Pilota Blackshape in cabina con le cuffie"></div>
+        <div class="info">
+          <h3>Perché i nostri capi sono diversi da quelli da negozio.</h3>
+          <h4>Si parte dalla cabina.</h4>
+          <p>Dalla posizione di una tasca all'altezza di un colletto, ogni scelta nasce da ore di volo sui nostri Prime e Gabriél. Sappiamo cosa serve perché voliamo anche noi.</p>
+          <a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener" class="blk blk-dark">Scopri Blackshape <span>↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="more">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="px px-muted">Esplora la linea</span><h2>Completa la dotazione.</h2></div>
+        <a href="home-2-v2.html#linea" class="blk blk-dark">Tutti i prodotti <span>→</span></a>
+      </div>
+      <div class="more-grid" id="moreGrid"></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <img src="assets/gabriel-apron.webp" alt="Aerei Blackshape sul piazzale" style="object-position:70% 50%">
+    <div class="hero-card">
+      <div class="top px px-muted"><span>Pre-flight briefing</span><span>Una mail al mese</span></div>
+      <div class="body">
+        <h2>Il cielo è di chi lo insegue.</h2>
+        <a href="home-2-v2.html#linea" class="blk blk-light">Esplora la linea <span>↑</span></a>
+      </div>
+      <form id="nl">
+        <input type="email" required placeholder="La tua email" aria-label="Email">
+        <button class="blk blk-dark" type="submit">Iscriviti</button>
+      </form>
+      <small>Iscrivendoti accetti di ricevere la newsletter di Blackshape Store.</small>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img class="word" src="assets/logo-white.svg" alt="Blackshape">
+        <p>Abbigliamento tecnico per chi vola, disegnato a Monopoli e provato in cabina dai piloti Blackshape.</p>
+      </div>
+      <div><h4 class="px">I prodotti</h4><ul id="footProducts"></ul></div>
+      <div><h4 class="px">Assistenza</h4><ul><li><a href="#" data-open="size">Guida alle taglie</a></li><li><a href="#">Spedizioni e resi</a></li><li><a href="home-2-v2.html">Domande frequenti</a></li><li><a href="#">Contatti</a></li></ul></div>
+      <div><h4 class="px">Blackshape</h4><ul><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Sito ufficiale</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Aerei</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Scuola di volo</a></li></ul></div>
+      <div><a href="#" class="blk blk-dark">Torna su <span>↑</span></a></div>
+    </div>
+    <div class="legal px"><span>© 2026 Blackshape S.p.A. · Strada Statale 16 km 841, Monopoli (BA)</span><span><a href="#">Privacy</a> · <a href="#">Cookie</a> · <a href="#">Condizioni di vendita</a></span></div>
+  </div>
+</footer>
+
+<div class="toast px" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // catalogo provvisorio: foto Unsplash e fotogrammi del video Blackshape, da sostituire con gli scatti veri
+  const garmentFeatures = [
+    { type: 'full',  label: 'Colletto', title: 'Le cuffie stanno sulle orecchie, non sul colletto.', text: 'Il colletto basso e senza cuciture sporgenti lascia agli archetti delle cuffie una superficie liscia: niente fruscii nell\'interfono e nessun punto di pressione dopo due ore di navigazione.', img: 'assets/v-pilot.webp' },
+    { type: 'split', label: 'Tasca sulla manica', title: 'La penna dove la cerchi, anche con le cinture allacciate.', text: 'Da seduto, con le cinture a quattro punti chiuse, le tasche sul petto sono irraggiungibili. Per questo penna e checklist stanno sulla manica sinistra, dove arriva la mano destra senza staccarsi dalla cloche.', imgs: ['assets/shop/e-bomber.webp', 'assets/shop/c-giacche.webp'] },
+    { type: 'full',  label: 'Zip amagnetiche', title: 'Niente metallo vicino alla bussola.', text: 'Zip, bottoni e cursori sono in materiali amagnetici: puoi sporgerti sul cruscotto senza che la bussola di bordo si sposti di un grado.', img: 'assets/v-cockpit.webp' },
+  ];
+  const gearFeatures = [
+    { type: 'full',  label: 'In cabina', title: 'Pensati per lo spazio che c\'è davvero.', text: 'Un biposto non ha un vano bagagli da aereo di linea. Ogni accessorio è misurato per stare sotto il sedile o nella tasca laterale senza intralciare i comandi.', img: 'assets/v-cockpit.webp' },
+    { type: 'split', label: 'Materiali', title: 'Pelle, alluminio e niente di superfluo.', text: 'Usiamo pochi materiali, scelti perché durano: pelle conciata in Italia, alluminio anodizzato e tessuti tecnici che non temono l\'umidità del piazzale.', imgs: ['assets/shop/c-borse.webp', 'assets/shop/c-occhiali.webp'] },
+    { type: 'full',  label: 'Provato in volo', title: 'Ogni pezzo vola prima di arrivare a te.', text: 'I piloti Blackshape usano ogni accessorio per settimane, tra voli locali e trasferimenti, prima di approvarlo per la collezione.', img: 'assets/v-pilot.webp' },
+  ];
+  const garmentDetails = [
+    { t: 'Zip amagnetiche', tag: 'Zip', d: 'Cursori e denti in materiali che non disturbano la bussola magnetica.', img: 'assets/shop/p-bomber.webp' },
+    { t: 'Tasca porta-penna', tag: 'Manica', d: 'Sulla manica sinistra, raggiungibile con le cinture allacciate.', img: 'assets/shop/e-bomber.webp' },
+    { t: 'Colletto basso', tag: 'Colletto', d: 'Nessuna cucitura sotto gli archetti delle cuffie.', img: 'assets/v-pilot.webp' },
+    { t: 'Polsini in maglia', tag: 'Polsini', d: 'Non si impigliano nei comandi e trattengono il caldo sul piazzale.', img: 'assets/shop/c-giacche.webp' },
+    { t: 'Tessuto che non si stropiccia', tag: 'Tessuto', d: 'Scendi dall\'aereo in ordine come quando sei salito.', img: 'assets/shop/p-pelle.webp' },
+    { t: 'Patch con la tua marca', tag: 'Patch', d: 'Ricamata con la marca del tuo aereo e cucita sulla spalla.', img: 'assets/shop/c-polo.webp' },
+  ];
+  const gearDetails = [
+    { t: 'Pelle conciata in Italia', tag: 'Materiale', d: 'Si ammorbidisce con l\'uso e prende la forma di come la porti.', img: 'assets/shop/p-borsa.webp' },
+    { t: 'Lenti G-15', tag: 'Lenti', d: 'Tagliano il riverbero senza falsare i colori del cruscotto.', img: 'assets/shop/p-occhiali.webp' },
+    { t: 'Misure da biposto', tag: 'Ingombro', d: 'Pensate per il poco spazio dietro ai sedili.', img: 'assets/shop/c-borse.webp' },
+  ];
+  const products = [
+    { id: 'bomber', name: 'Bomber Flight MA-1', short: ['Bomber', 'Flight MA-1'], price: 289, stock: 'Disponibile', img: 'assets/shop/p-bomber.webp', pbg: '#CDD0D1', fit: 'contain',
+      hero: 'assets/shop/h-bomber.webp', heroPos: '50% 18%',
+      statement: 'Nylon antivento, fodera trapuntata e una tasca sulla manica per la penna: il bomber pensato per le mattine sul piazzale e le ore in cabina.',
+      colors: [{ n: 'Tabacco', c: '#A0582F' }, { n: 'Nero', c: '#1D1D1F' }], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: ['assets/shop/p-bomber.webp', 'assets/shop/e-bomber.webp', 'assets/shop/c-giacche.webp', 'assets/v-pilot.webp', 'assets/v-apron.webp'],
+      specTitle: 'Il bomber per chi vola, disegnato a Monopoli.',
+      specs: { 'Costruzione': ['Nylon antivento 100%', 'Fodera trapuntata leggera', 'Zip e cursori amagnetici', 'Polsini e fondo in maglia a costine'], 'In cabina': ['Colletto basso compatibile con le cuffie', 'Tasca porta-penna sulla manica sinistra', 'Nessuna cucitura sotto le cinture'], 'Tasche': ['2 tasche esterne con zip', '1 tasca interna per documenti di volo', '1 tasca sulla manica'], 'Vestibilità': ['Regolare, pensata sopra una felpa', '__guide'] },
+      kind: 'garment' },
+    { id: 'pelle', name: 'Giacca in pelle Hangar', short: ['Giacca in pelle', 'Hangar'], price: 449, stock: 'Ultimi pezzi', img: 'assets/shop/p-pelle.webp', pbg: '#ECECEC', fit: 'contain',
+      hero: 'assets/shop/h-pelle.webp', heroPos: '50% 30%',
+      statement: 'Pelle di agnello conciata in Italia, zip amagnetiche e interno imbottito: la giacca che invecchia insieme alle tue ore di volo.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+      gallery: ['assets/shop/p-pelle.webp', 'assets/shop/c-giacche.webp', 'assets/v-pilot.webp', 'assets/v-apron.webp'],
+      specTitle: 'Pelle italiana, pensata per il piazzale.',
+      specs: { 'Costruzione': ['Pelle di agnello conciata in Italia', 'Imbottitura interna leggera', 'Zip amagnetiche'], 'In cabina': ['Colletto basso compatibile con le cuffie', 'Spalle articolate per le cinture'], 'Tasche': ['2 tasche esterne con zip', '1 tasca interna'], 'Vestibilità': ['Asciutta', '__guide'] },
+      kind: 'garment' },
+    { id: 'polo', name: 'Polo Crew in piqué', short: ['Polo Crew', 'in piqué'], price: 79, stock: 'Disponibile', img: 'assets/shop/p-polo.webp', pbg: '#121312', fit: 'contain', dark: true,
+      hero: 'assets/v-pilot.webp', heroPos: '50% 40%',
+      statement: 'Cotone piqué traspirante che resta in ordine anche dopo tre ore seduti, con il ricamo Blackshape sul petto: la divisa del sabato in aeroclub.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }, { n: 'Bianco', c: '#FFFFFF' }, { n: 'Blu Prime', c: '#1F4FD1' }], sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      gallery: ['assets/shop/p-polo.webp', 'assets/shop/c-polo.webp', 'assets/v-pilot.webp'],
+      specTitle: 'La polo che non si stropiccia sotto le cinture.',
+      specs: { 'Costruzione': ['Cotone piqué 100%', 'Ricamo Blackshape sul petto', 'Colletto in maglia rinforzato'], 'In cabina': ['Traspirante sotto il sole della calotta', 'Nessuna cucitura sulle spalle'], 'Vestibilità': ['Regolare', '__guide'] },
+      kind: 'garment' },
+    { id: 'occhiali', name: 'Occhiali aviator polarizzati', short: ['Occhiali aviator', 'polarizzati'], price: 129, stock: 'Disponibile', img: 'assets/shop/p-occhiali.webp', pbg: '#1B1B1A', fit: 'cover', dark: true,
+      hero: 'assets/shop/h-occhiali.webp', heroPos: '50% 50%',
+      statement: 'Lenti G-15 che tagliano il riverbero della calotta senza oscurare i display di bordo, e aste sottili che scivolano sotto le cuffie.',
+      colors: [{ n: 'Argento', c: '#A7AAAF' }, { n: 'Oro', c: '#C9A860' }], sizes: ['Taglia unica'],
+      gallery: ['assets/shop/p-occhiali.webp', 'assets/shop/c-occhiali.webp', 'assets/v-pilot.webp'],
+      specTitle: 'Luce piena, cruscotto leggibile.',
+      specs: { 'Lenti': ['G-15 polarizzate', 'Protezione UV400', 'Trattamento antigraffio'], 'In cabina': ['Leggibili con i display LCD', 'Aste sottili compatibili con le cuffie'], 'Montatura': ['Metallo leggero', 'Naselli regolabili', 'Custodia rigida inclusa'] },
+      kind: 'gear' },
+    { id: 'borsa', name: 'Flight bag in pelle', short: ['Flight bag', 'in pelle'], price: 159, stock: 'Disponibile', img: 'assets/shop/p-borsa.webp', pbg: '#E8E8E8', fit: 'contain',
+      hero: 'assets/shop/h-borsa.webp', heroPos: '40% 60%',
+      statement: 'Ventotto litri per cuffie, kneeboard e documenti, un fondo rigido e maniglie che non graffiano gli interni: tutto il necessario, sotto il sedile.',
+      colors: [{ n: 'Nero', c: '#1D1D1F' }], sizes: ['28 litri'],
+      gallery: ['assets/shop/p-borsa.webp', 'assets/shop/c-borse.webp', 'assets/v-apron.webp'],
+      specTitle: 'Tutto il necessario, sotto il sedile.',
+      specs: { 'Costruzione': ['Pelle conciata in Italia', 'Fondo rigido', 'Capacità 28 litri'], 'In cabina': ['Scomparto imbottito per le cuffie', 'Tasca piatta per kneeboard e carte'], 'Dimensioni': ['50 × 28 × 24 cm', 'Peso 1,4 kg'] },
+      kind: 'gear' },
+  ];
+
+  const $ = s => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  const p = products.find(x => x.id === params.get('id')) || products[0];
+  document.title = p.name + ' | Blackshape Store';
+  document.documentElement.style.setProperty('--pbg', p.pbg);
+
+  // hero + testo
+  $('#heroImg').src = p.hero; $('#heroImg').alt = p.name; $('#heroImg').style.objectPosition = p.heroPos;
+  $('#heroTitle').textContent = p.name.replace(/-/g, '‑'); // trattino che non va a capo (MA-1)
+  $('#statement').textContent = p.statement;
+
+  // galleria
+  const present = $('#present');
+  present.classList.toggle('cover', p.fit === 'cover');
+  present.classList.toggle('dark', !!p.dark);
+  present.dataset.light = String(!p.dark);
+  const stage = $('#stageImg');
+  const setStage = src => { stage.style.opacity = 0; setTimeout(() => { stage.src = src; stage.style.opacity = 1; }, 150); };
+  stage.src = p.gallery[0]; stage.alt = p.name;
+  $('#thumbs').innerHTML = p.gallery.map((g, i) => `<button aria-pressed="${i === 0}" aria-label="Immagine ${i + 1}"><img src="${g}" alt=""></button>`).join('');
+  document.querySelectorAll('#thumbs button').forEach((b, i) => b.onclick = () => {
+    document.querySelectorAll('#thumbs button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    // la foto prodotto resta sul fondo pieno, le foto d'ambiente riempiono lo spazio
+    present.classList.toggle('cover', i > 0 || p.fit === 'cover');
+    setStage(p.gallery[i]);
+  });
+
+  // barra d'acquisto
+  $('#buyName').innerHTML = `${p.short[0]}<span>${p.short[1]}</span>`;
+  $('#buyStock').textContent = p.stock;
+  $('#buyPrice').textContent = p.price + ' €';
+  let color = p.colors[0];
+  $('#swatches').innerHTML = p.colors.map((c, i) => `<button style="background:${c.c}" aria-label="${c.n}" aria-pressed="${i === 0}"></button>`).join('');
+  $('#colorName').textContent = color.n;
+  document.querySelectorAll('#swatches button').forEach((b, i) => b.onclick = () => {
+    color = p.colors[i]; $('#colorName').textContent = color.n;
+    document.querySelectorAll('#swatches button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  const size = $('#size');
+  size.innerHTML = p.sizes.length > 1 ? '<option value="">Scegli la taglia</option>' + p.sizes.map(s => `<option>${s}</option>`).join('') : `<option>${p.sizes[0]}</option>`;
+  size.onchange = () => $('#sizeWrap').classList.remove('error');
+  if (p.sizes.length === 1) document.querySelector('.guide-link').hidden = true;
+
+  // scheda tecnica
+  $('#specTitle').textContent = p.specTitle;
+  $('#specGroups').innerHTML = Object.entries(p.specs).map(([k, list]) => `<div class="spec-group"><span class="px">${k}</span><ul>${list.map(li => li === '__guide' ? '<li><a href="#" data-open="size">Guida alle taglie</a></li>' : `<li>${li}</li>`).join('')}</ul></div>`).join('');
+
+  // sezioni funzione
+  const feats = p.kind === 'garment' ? garmentFeatures : gearFeatures;
+  $('#features').innerHTML = feats.map(f => f.type === 'full'
+    ? `<section class="feat-full" data-light="false"><img src="${f.img}" alt=""><div class="copy wrap"><span class="px feat-label">${f.label}</span><h2>${f.title}</h2></div><p>${f.text}</p></section>`
+    : `<section class="feat-split"><div class="wrap"><span class="px feat-label">${f.label}</span><h2>${f.title}</h2><div class="pair">${f.imgs.map(s => `<img src="${s}" alt="" loading="lazy">`).join('')}</div><p>${f.text}</p></div></section>`).join('');
+
+  // dettagli
+  const dets = p.kind === 'garment' ? garmentDetails : gearDetails;
+  $('#details').innerHTML = dets.map(d => `<article class="det"><div class="media"><img src="${d.img}" alt="" loading="lazy"></div><span class="px px-muted tag">${d.tag}</span><button aria-expanded="false"><h3>${d.t}</h3><span class="plus">+</span></button><p>${d.d}</p></article>`).join('');
+  document.querySelectorAll('.det button').forEach(b => b.onclick = () => { const a = b.closest('.det'); a.classList.toggle('open'); b.setAttribute('aria-expanded', a.classList.contains('open')); });
+
+  // altri prodotti, lista shop, footer
+  const url = x => `prodotto-v2.html?id=${x.id}`;
+  $('#moreGrid').innerHTML = products.filter(x => x !== p).map(x => `<a href="${url(x)}" class="mcard"><div class="media"><img src="${x.img}" alt="${x.name}" loading="lazy"></div><h3>${x.name}</h3><div class="row"><span class="price">${x.price} €</span><span class="px px-muted">Dettagli ↗</span></div></a>`).join('');
+  $('#shopList').innerHTML = products.map(x => `<a href="${url(x)}" class="line-item"><img src="${x.img}" alt=""><div><strong>${x.name}</strong><span class="px px-muted">${x.stock}</span></div><span class="px">${x.price} €</span></a>`).join('');
+  $('#footProducts').innerHTML = products.map(x => `<li><a href="${url(x)}">${x.name}</a></li>`).join('');
+
+  // header: segue la barra annunci; fascia scura dopo la hero, logo nero sui fondi chiari
+  const hdr = $('#hdr'), announce = $('.announce');
+  const setAnn = () => document.documentElement.style.setProperty('--ann', announce.offsetHeight + 'px');
+  setAnn(); addEventListener('resize', setAnn);
+  const sections = [...document.querySelectorAll('main > section, #features > section')];
+  const onScroll = () => {
+    hdr.style.top = Math.max(announce.getBoundingClientRect().bottom, 0) + 'px';
+    const under = sections.find(s => { const r = s.getBoundingClientRect(); return r.top <= 60 && r.bottom > 60; });
+    const light = under && under.dataset.light === 'true';
+    hdr.classList.toggle('light', !!light);
+    hdr.classList.toggle('solid', !light && !!under && !under.classList.contains('p-hero') && !under.classList.contains('feat-full'));
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // pannelli
+  const scrim = $('#scrim');
+  const drawers = { shop: $('#shopDrawer'), cart: $('#cartDrawer'), size: $('#sizeDrawer') };
+  const openDrawer = name => { Object.entries(drawers).forEach(([k, d]) => { d.classList.toggle('open', k === name); d.setAttribute('aria-hidden', k !== name); }); scrim.classList.toggle('on', !!name); };
+  $('#shopBtn').onclick = () => openDrawer('shop');
+  $('#cartBtn').onclick = () => openDrawer('cart');
+  scrim.onclick = () => openDrawer(null);
+  document.addEventListener('click', e => {
+    if (e.target.closest('[data-close]')) openDrawer(null);
+    const o = e.target.closest('[data-open]'); if (o) { e.preventDefault(); openDrawer(o.dataset.open); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') openDrawer(null); });
+
+  // carrello
+  const cart = [];
+  const toast = $('#toast');
+  const show = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(show.t); show.t = setTimeout(() => toast.classList.remove('show'), 2200); };
+  function renderCart() {
+    $('#cartCount').textContent = cart.length;
+    $('#cartItemsCount').textContent = cart.length;
+    $('#cartTotal').textContent = cart.reduce((s, x) => s + x.price, 0) + ' €';
+    $('#cartList').innerHTML = cart.length ? cart.map(x => `<div class="line-item"><img src="${x.img}" alt=""><div><strong>${x.name}</strong><span class="px px-muted">${x.color} · ${x.size}</span></div><span class="px">${x.price} €</span></div>`).join('')
+      : '<p class="empty">Il carrello è vuoto.</p>';
+  }
+  renderCart();
+  $('#addBtn').onclick = () => {
+    if (!size.value) { $('#sizeWrap').classList.add('error'); size.focus(); show('Scegli la taglia'); return; }
+    cart.push({ ...p, color: color.n, size: size.value }); renderCart(); show(p.name + ' aggiunto'); openDrawer('cart');
+  };
+  $('#nl').onsubmit = e => { e.preventDefault(); e.target.reset(); show('Iscrizione confermata'); };
+
+  // testo che si accende parola per parola
+  const st = $('#statement');
+  st.innerHTML = st.textContent.split(' ').map(w => `<span class="w">${w}</span>`).join(' ');
+  const words = [...st.querySelectorAll('.w')];
+  const light = () => {
+    const r = st.getBoundingClientRect();
+    const k = Math.min(Math.max((innerHeight * 0.85 - r.top) / (r.height + innerHeight * 0.3), 0), 1);
+    words.forEach((w, i) => w.classList.toggle('on', i < k * words.length * 1.15));
+  };
+  addEventListener('scroll', light, { passive: true }); light();
+</script>
+</body>
+</html>
