@@ -246,10 +246,11 @@
     .cluster .lbl { display: none; }
     .brand { gap: 12px; }
     .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
-    /* card impilate anche su telefono: ogni card sta in uno schermo sotto l'header, la foto prende lo spazio che resta */
-    .pcard { top: 76px; margin-bottom: 16px; }
-    .pin { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; height: calc(100svh - 92px); max-height: 760px; }
-    .pin .media { aspect-ratio: auto; min-height: 0; }
+    /* card impilate anche su telefono: foto bassa così le info si leggono subito,
+       e spazio sotto ogni card perché la successiva arrivi dopo un po' di scroll */
+    .pcard { top: 76px; margin-bottom: 22svh; }
+    .pin { grid-template-columns: 1fr; height: auto; }
+    .pin .media { aspect-ratio: auto; height: clamp(150px, 26svh, 240px); }
     .pin .info { padding: 4px 4px 0; }
     .pin .code { padding-bottom: 10px; }
     .pin .code b { font-size: 44px; }
@@ -266,10 +267,12 @@
     .overlay .scroll-hint { display: none; }
     .overlay form { flex-direction: column; }
     .overlay input { flex: none; }
-    .hero { height: auto; min-height: calc(100svh - var(--ann, 37px)); }
-    .hero-grid { position: relative; inset: auto; grid-template-columns: 1fr; grid-template-rows: none; row-gap: 28px; padding-top: 110px; }
-    .hero-grid .side { grid-column: 1; grid-row: auto; justify-self: stretch; width: 100%; padding-top: 0; }
-    .hero-cta { grid-row: auto; margin-top: 0; }
+    /* hero su telefono: tutto lo schermo, titolo e testo in alto, prodotto in evidenza e bottone appoggiati in basso */
+    .hero { height: auto; min-height: calc(100svh - var(--ann, 37px)); min-height: calc(100dvh - var(--ann, 37px)); }
+    .hero-grid { position: relative; inset: auto; min-height: inherit; display: flex; flex-direction: column; gap: 20px; padding-top: 110px; padding-bottom: 24px; }
+    .hero-grid .side { display: contents; }
+    .hero-grid .side .feature-box { margin-top: auto; }
+    .hero-cta { margin-top: 0; }
     .hero-cta .blk { width: 100%; }
     .method-grid, .faq-grid { grid-template-columns: 1fr; }
     .method .media { min-height: 340px; }
