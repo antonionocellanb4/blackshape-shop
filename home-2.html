@@ -246,11 +246,10 @@
     .cluster .lbl { display: none; }
     .brand { gap: 12px; }
     .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
-    /* card impilate anche su telefono: foto bassa così le info si leggono subito,
-       e spazio sotto ogni card perché la successiva arrivi dopo un po' di scroll */
-    .pcard { top: 76px; margin-bottom: 22svh; }
-    .pin { grid-template-columns: 1fr; height: auto; }
-    .pin .media { aspect-ratio: auto; height: clamp(150px, 26svh, 240px); }
+    /* card impilate anche su telefono: ogni card sta in uno schermo sotto l'header, la foto prende lo spazio che resta */
+    .pcard { top: 76px; margin-bottom: 16px; }
+    .pin { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; height: calc(100svh - 92px); max-height: 760px; }
+    .pin .media { aspect-ratio: auto; min-height: 0; }
     .pin .info { padding: 4px 4px 0; }
     .pin .code { padding-bottom: 10px; }
     .pin .code b { font-size: 44px; }
