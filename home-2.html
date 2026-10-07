@@ -246,11 +246,21 @@
     .cluster .lbl { display: none; }
     .brand { gap: 12px; }
     .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
-          .pcard { position: relative; top: 0; margin-bottom: 16px; }
-    .pin { grid-template-columns: 1fr; }
-    .buyrow { flex-wrap: wrap; margin-top: 18px; }
-    .pin .actions { width: 100%; }
-    .pin .actions .blk { flex: 1; }
+    /* card impilate anche su telefono: ogni card sta in uno schermo sotto l'header, la foto prende lo spazio che resta */
+    .pcard { top: 76px; margin-bottom: 16px; }
+    .pin { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; height: calc(100svh - 92px); max-height: 760px; }
+    .pin .media { aspect-ratio: auto; min-height: 0; }
+    .pin .info { padding: 4px 4px 0; }
+    .pin .code { padding-bottom: 10px; }
+    .pin .code b { font-size: 44px; }
+    .pin h3 { font-size: 21px; margin-top: 12px; }
+    .strip { margin-top: 12px; }
+    .strip > div { padding: 8px 10px; }
+    .strip dd { font-size: 14px; margin-top: 2px; }
+    .pin .info p { display: none; }
+    .buyrow { margin-top: 12px; padding-top: 12px; }
+    .pin .price { font-size: 22px; }
+    .pin .actions .blk { --blk: 42px; padding: 0 14px; }
     .overlay .wrap { flex-direction: column; align-items: stretch; gap: 20px; }
     .overlay .copy > .blk, .overlay .aside .blk { width: 100%; }
     .overlay .scroll-hint { display: none; }
@@ -268,6 +278,13 @@
         .foot-grid > :last-child { grid-column: 1 / -1; }
   }
   @media (max-width: 560px) {
+    /* header su telefono: logo e pulsanti più compatti, così "Store" non finisce sotto il carrello */
+    .hdr { gap: 8px; }
+    .brand { gap: 10px; min-width: 0; }
+    .brand .word { height: 21px; }
+    .brand .store { padding-left: 10px; font-size: 12px; line-height: 18px; }
+    .cluster { gap: 6px; flex: none; }
+    .cluster .blk { --blk: 42px; padding: 0 12px; gap: 8px; }
     body { font-size: 16px; }
     .px { font-size: 12px; }
     .blk { font-size: 13px; }
@@ -494,14 +511,13 @@
   const thumbs = [...document.querySelectorAll('#thumbs button')];
   const bgs = [...document.querySelectorAll('#bg img')];
   function stack() {
-    const desktop = innerWidth > 900;
     let active = 0, entering = 0;
     cards.forEach((c, i) => {
       const pin = c.firstElementChild, next = cards[i + 1];
       const r = c.getBoundingClientRect();
       if (r.top <= 120) active = i;
       if (r.top < innerHeight * 0.5) entering = i; // il fondo cambia quando la card supera metà schermo, cioè quando è lei quella in vista
-      if (!desktop || !next) { pin.style.transform = ''; pin.style.filter = ''; return; }
+      if (!next) { pin.style.transform = ''; pin.style.filter = ''; return; }
       const n = next.getBoundingClientRect();
       const p = Math.min(Math.max((r.bottom - n.top) / r.height, 0), 1);
       pin.style.transform = `scale(${1 - p * 0.06})`;

@@ -141,7 +141,7 @@
   /* ---------- scheda tecnica ---------- */
   .specs { position: relative; padding: clamp(120px, 14vw, 200px) 0 clamp(120px, 12vw, 180px); overflow: hidden; }
   .specs .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(.4) saturate(.8); transform: scale(1.1); }
-  .spec-card { position: relative; max-width: 760px; margin: 0 auto; background: rgba(22,22,24,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 23px; padding: 16px; }
+  .spec-card { position: relative; width: calc(100% - 2 * var(--gutter)); max-width: 760px; margin: 0 auto; background: rgba(22,22,24,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--line); border-radius: 23px; padding: 16px; }
   .spec-card .top { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
   .spec-card h2 { font-size: clamp(34px, 4vw, 58px); letter-spacing: -0.055em; padding: clamp(60px, 9vw, 120px) 0 28px; }
   .spec-group { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
@@ -272,40 +272,56 @@
     .cluster .lbl { display: none; }
     .brand { gap: 12px; }
     .brand .store { padding-left: 12px; font-size: 13px; line-height: 22px; }
-    .buy { left: 0; right: 0; bottom: 0; transform: none; width: 100%; border-radius: 23px 23px 0 0; border-bottom: 0; grid-template-columns: 1fr; padding-bottom: env(safe-area-inset-bottom); }
-    .buy > div { border-left: 0; padding: 8px 12px; }
-    .buy > div:first-child { padding-top: 12px; }
-    .buy .name { font-size: 18px; }
+    /* barra d'acquisto su telefono: due righe, nome + prezzo e taglia + bottone */
+    .buy { left: 0; right: 0; bottom: 0; transform: none; width: 100%; border-radius: 23px 23px 0 0; border-bottom: 0; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); grid-template-areas: "name price" "size add"; /* il nome occupa tutta la riga, il prezzo gli sta sopra a destra */ gap: 10px 8px; padding: 14px 12px calc(12px + env(safe-area-inset-bottom)); }
+    .buy > div { border-left: 0; padding: 0; }
+    .buy > div:first-child { grid-area: 1 / 1 / 2 / 3; min-width: 0; padding-right: 76px; }
+    .buy .name { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .buy .name span { display: inline; margin-left: 6px; }
+    #buyStock { display: none; }
+    .buy .guide-cell { grid-area: size; }
     .buy .guide-link { display: none; }
     .buy .guide-cell .size-select { flex: 1; }
-    .buy .guide-cell .size-select select { width: 100%; min-width: 0; }
-    .buy .action-cell { gap: 8px; padding-bottom: 12px; }
-    .buy .action-cell .blk { flex: 1; }
-    .buy .price { font-size: 20px; }
-    .p-hero .label { top: auto; bottom: 250px; }
-    .gallery-thumbs { top: auto; bottom: 220px; transform: none; flex-direction: row; left: 50%; translate: -50% 0; }
+    .buy .guide-cell .size-select select { width: 100%; min-width: 0; padding: 0 36px 0 18px; }
+    .buy .action-cell { display: contents; }
+    .buy .price { grid-area: price; justify-self: end; align-self: center; font-size: 20px; }
+    #addBtn { grid-area: add; padding: 0 12px; }
+    .p-hero .label { top: auto; bottom: 190px; }
+    .gallery-thumbs { top: auto; bottom: 160px; transform: none; flex-direction: row; left: 50%; translate: -50% 0; }
     .gallery-thumbs button { width: 56px; height: 56px; }
-    .present .stage { padding: 90px 0 300px; }
+    .present .stage { padding: 90px 0 240px; }
     .spec-group { grid-template-columns: 1fr; gap: 10px; }
-    .feat-full p { bottom: 240px; right: var(--gutter); }
+    /* su telefono il testo sta in basso, sopra la barra d'acquisto, così non copre le facce */
+    .feat-full { display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 150px; }
+    .feat-full::after { background: linear-gradient(0deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,0) 70%); }
+    .feat-full .copy, .feat-full p { position: relative; top: auto; bottom: auto; left: auto; right: auto; width: 100%; }
+    .feat-full p { padding: 0 var(--gutter); margin-top: 14px; font-size: 16px; }
+    .feat-full h2 { font-size: 38px; }
     .feat-split .pair, .feat-split p { margin-left: 0; }
     .det-grid { grid-template-columns: 1fr; }
+    .more .head { flex-direction: column; align-items: flex-start; }
     .pin { grid-template-columns: 1fr; }
     .overlay .wrap { flex-direction: column; align-items: stretch; gap: 20px; }
     .overlay .copy > .blk, .overlay .aside .blk { width: 100%; }
     .overlay .scroll-hint { display: none; }
     .overlay form { flex-direction: column; }
     .overlay input { flex: none; }
-    .closing .overlay { bottom: 210px; }
+    .closing .overlay { bottom: 150px; }
     .closing.shade::after { background: linear-gradient(0deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.6) 55%, rgba(0,0,0,.1) 85%); }
     .services { grid-template-columns: 1fr; }
     .service + .service { border-left: 0; border-top: 1px solid var(--line); }
             .foot-grid > :last-child { grid-column: 1 / -1; }
-    footer { padding-bottom: calc(240px + env(safe-area-inset-bottom)); }
-    .toast { bottom: calc(230px + env(safe-area-inset-bottom)); }
+    footer { padding-bottom: calc(180px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(170px + env(safe-area-inset-bottom)); }
   }
   @media (max-width: 560px) {
+    /* header su telefono: logo e pulsanti più compatti, così "Store" non finisce sotto il carrello */
+    .hdr { gap: 8px; }
+    .brand { gap: 10px; min-width: 0; }
+    .brand .word { height: 21px; }
+    .brand .store { padding-left: 10px; font-size: 12px; line-height: 18px; }
+    .cluster { gap: 6px; flex: none; }
+    .cluster .blk { --blk: 42px; padding: 0 12px; gap: 8px; }
     body { font-size: 16px; }
     .px { font-size: 12px; }
     .blk { font-size: 13px; }
@@ -607,7 +623,7 @@
     document.querySelectorAll('#swatches button').forEach(x => x.setAttribute('aria-pressed', x === b));
   });
   const size = $('#size');
-  size.innerHTML = p.sizes.length > 1 ? '<option value="">Scegli la taglia</option>' + p.sizes.map(s => `<option>${s}</option>`).join('') : `<option>${p.sizes[0]}</option>`;
+  size.innerHTML = p.sizes.length > 1 ? '<option value="">Taglia</option>' + p.sizes.map(s => `<option>${s}</option>`).join('') : `<option>${p.sizes[0]}</option>`;
   size.onchange = () => $('#sizeWrap').classList.remove('error');
   if (p.sizes.length === 1) document.querySelector('.guide-link').hidden = true;
 

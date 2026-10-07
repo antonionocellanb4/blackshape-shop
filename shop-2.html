@@ -268,6 +268,13 @@
         .foot-grid > :last-child { grid-column: 1 / -1; }
   }
   @media (max-width: 560px) {
+    /* header su telefono: logo e pulsanti più compatti, così "Store" non finisce sotto il carrello */
+    .hdr { gap: 8px; }
+    .brand { gap: 10px; min-width: 0; }
+    .brand .word { height: 21px; }
+    .brand .store { padding-left: 10px; font-size: 12px; line-height: 18px; }
+    .cluster { gap: 6px; flex: none; }
+    .cluster .blk { --blk: 42px; padding: 0 12px; gap: 8px; }
     body { font-size: 16px; }
     .px { font-size: 12px; }
     .blk { font-size: 13px; }
