@@ -58,7 +58,7 @@
   .announce a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; }
 
   /* ---------- header ---------- */
-  .hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; transition: top .3s; }
+  .hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 50; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; pointer-events: none; }
   .hdr > * { pointer-events: auto; }
   /* dopo la hero: fascia che sfuma, cosi i blocchi non finiscono sopra il testo */
   .hdr::before { content: ""; position: absolute; inset: 0 0 -72px 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .35s ease;
@@ -239,6 +239,8 @@
     .foot-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 900px) {
+    /* su telefono niente sfocatura dietro l'header: costa molto durante lo scroll, il gradiente basta */
+    .hdr::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
     :root { --blk: 46px; }
     .hdr { padding: 12px var(--gutter); }
     .brand .word { height: 26px; }

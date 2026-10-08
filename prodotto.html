@@ -265,6 +265,8 @@
     .foot-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 900px) {
+    /* su telefono niente sfocatura dietro l'header: costa molto durante lo scroll, il gradiente basta */
+    .hdr::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
     :root { --blk: 46px; }
     .hdr { padding: 12px var(--gutter); }
     .brand .word { height: 26px; }
