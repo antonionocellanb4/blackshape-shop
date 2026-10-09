@@ -226,6 +226,9 @@
   .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--soft); }
   .foot-grid a:hover { color: var(--fg); }
   .to-top { width: var(--blk); padding: 0; }
+  /* scritta Blackshape da bordo a bordo del footer, presa dal logo SVG senza il simbolo */
+  .foot-word { display: block; width: 100%; height: auto; margin-top: clamp(48px, 7vw, 96px); }
+  .foot-word + .legal { margin-top: clamp(24px, 3vw, 40px); }
   .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); }
 
   .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; z-index: 90; background: var(--white); color: var(--black); padding: 12px 16px; border-radius: 12px; width: max-content; max-width: calc(100vw - 32px); transition: opacity .25s, transform .25s; }
@@ -450,6 +453,7 @@
       <div><h4 class="px">Blackshape</h4><ul><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Sito ufficiale</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Aerei</a></li><li><a href="https://blackshapeaircraft.com/" target="_blank" rel="noopener">Scuola di volo</a></li></ul></div>
       <div><a href="#" class="blk blk-dark to-top" aria-label="Torna su"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a></div>
     </div>
+    <img class="foot-word" src="assets/wordmark-white.svg" alt="Blackshape">
     <div class="legal px">
       <span>© 2026 Blackshape S.p.A. · Strada Statale 16 km 841, Monopoli (BA) · Made in Never Before Italia</span>
       <span><a href="#">Privacy</a> · <a href="#">Cookie</a> · <a href="#">Condizioni di vendita</a></span>
