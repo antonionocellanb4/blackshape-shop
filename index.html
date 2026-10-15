@@ -62,9 +62,9 @@
   /* ---------- barra annunci + header ---------- */
   .announce { background: var(--black); color: var(--on-dark); font-size: 13px; font-weight: 500; text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); }
   /* header trasparente sopra la hero, vetro bianco allo scroll: colori in variabili */
-  .header { --h-bg: var(--white); --h-fg: var(--text); --h-muted: var(--muted); --h-line: var(--line); --h-hover: var(--surface); --logo-filter: invert(1); --badge-bg: var(--black); --badge-fg: var(--white);
+  .header { --h-bg: var(--white); --h-fg: var(--text); --h-muted: var(--muted); --h-line: transparent; --h-hover: var(--surface); --logo-filter: invert(1); --badge-bg: var(--black); --badge-fg: var(--white);
     position: sticky; top: 0; z-index: 50; background: var(--h-bg); background-origin: border-box; /* senza, il gradiente si ripete nel bordo e disegna una riga scura */ color: var(--h-fg); border-bottom: 1px solid var(--h-line); transition: background .3s, color .3s, border-color .3s; }
-  .header.scrolled { --h-bg: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+  .header.scrolled { --h-bg: rgba(255,255,255,.5); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
   .header[data-v="a"] { margin-bottom: -69px; }
   .header[data-v="a"]:not(.scrolled):not(.mega-open) { --h-bg: linear-gradient(180deg, rgba(0,0,0,.38), rgba(0,0,0,0)); --h-fg: var(--on-dark); --h-muted: #E8E8ED; --h-line: transparent; --h-hover: rgba(255,255,255,.12); --logo-filter: none; --badge-bg: var(--white); --badge-fg: var(--black); }
   .header.mega-open { --h-bg: var(--white); }
