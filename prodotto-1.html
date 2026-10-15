@@ -60,7 +60,13 @@
   .announce { background: var(--black); color: var(--on-dark); font-size: 13px; font-weight: 500; text-align: center; padding: 9px var(--gutter); padding-top: calc(9px + env(safe-area-inset-top)); }
   .header { --h-bg: var(--white); --h-fg: var(--text); --h-muted: var(--muted); --h-line: transparent; --h-hover: var(--surface); --logo-filter: invert(1); --badge-bg: var(--black); --badge-fg: var(--white);
     position: sticky; top: 0; z-index: 50; background: var(--h-bg); color: var(--h-fg); border-bottom: 1px solid var(--h-line); transition: background .3s; }
-  .header.scrolled { --h-bg: rgba(255,255,255,.5); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+  /* allo scroll: vetro che sfuma verso il basso fino al trasparente (fondo e sfocatura su un livello sotto, con maschera) */
+  .header.scrolled { --h-bg: transparent; }
+  .header.scrolled::before { content: ""; position: absolute; inset: 0 0 -28px 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.6) 45%, rgba(255,255,255,.25) 75%, rgba(255,255,255,0) 100%);
+    backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 100%); }
+  .header.mega-open::before { display: none; }
   .header.mega-open { --h-bg: var(--white); }
   .header .row { display: flex; align-items: center; height: 68px; gap: 40px; }
   .logo { display: flex; align-items: center; gap: 10px; flex: none; }
